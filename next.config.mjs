@@ -1,6 +1,5 @@
-import type { NextConfig } from 'next';
-
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -16,11 +15,9 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: 'cdn.pixabay.com' },
     ],
   },
-  // In Next.js 15, Server Actions are stable. 
-  // Only use experimental if you need to change the bodySizeLimit specifically.
   experimental: {
     serverActions: {
-       bodySizeLimit: '10mb',
+      bodySizeLimit: '10mb',
     },
   },
 };
