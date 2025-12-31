@@ -56,6 +56,7 @@ export async function POST(request: NextRequest) {
     // Create or load PDF document
     let pdfDoc: PDFDocument;
     let firstPage;
+    let width: number;
     let height: number;
 
     // Check if template is an image or PDF based on content type or by trying to load
@@ -79,6 +80,7 @@ export async function POST(request: NextRequest) {
 
       // Create page with image dimensions
       firstPage = pdfDoc.addPage([imgWidth, imgHeight]);
+      width = imgWidth;
       height = imgHeight;
 
       // Draw the image as background
@@ -93,7 +95,9 @@ export async function POST(request: NextRequest) {
       pdfDoc = await PDFDocument.load(templateBytes);
       const pages = pdfDoc.getPages();
       firstPage = pages[0];
-      height = firstPage.getSize().height;
+      const pageSize = firstPage.getSize();
+      width = pageSize.width;
+      height = pageSize.height;
     }
 
     // Embed fonts
@@ -126,13 +130,22 @@ export async function POST(request: NextRequest) {
       if (!text || !position) return;
 
       // Validate position values
-      const x = Number(position.x);
-      const y = Number(position.y);
+      let x = Number(position.x);
+      let y = Number(position.y);
       const fontSize = Number(position.fontSize) || 12;
 
       if (isNaN(x) || isNaN(y) || isNaN(fontSize)) {
         console.warn(`Invalid position values for text "${text}":`, position);
         return;
+      }
+
+      // Convert percentages to pixels if values are between 0-100
+      // (Assuming positions are stored as percentages from admin panel)
+      if (x <= 100) {
+        x = (x / 100) * width;
+      }
+      if (y <= 100) {
+        y = (y / 100) * height;
       }
 
       firstPage.drawText(text, {
