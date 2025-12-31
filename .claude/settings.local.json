@@ -31,7 +31,9 @@
       "Bash(git rm:*)",
       "Bash(npm audit fix:*)",
       "Bash(if exist node_modules.cache rd /s /q node_modules.cache)",
-      "Bash(test -f:*)"
+      "Bash(test -f:*)",
+      "Bash(find:*)",
+      "Bash(git revert:*)"
     ]
   }
 }
