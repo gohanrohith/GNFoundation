@@ -30,13 +30,14 @@ export async function POST(request: NextRequest) {
     // Set PDF options for Gotenberg
     const isLandscape = template.orientation === 'landscape';
 
-    // Build query parameters
+    // Build query parameters for Gotenberg
     const params = {
       marginTop: '0',
       marginBottom: '0',
       marginLeft: '0',
       marginRight: '0',
       printBackground: 'true',
+      preferCSSPageSize: 'true', // Use CSS @page size instead of default
     };
 
     // Add orientation-specific params
@@ -107,8 +108,10 @@ function generateCertificateHTML(student: any, template: any) {
       left: 0;
       width: 100%;
       height: 100%;
-      background: url('${template.templateUrl}') no-repeat center/cover;
-      background-size: cover;
+      background-image: url('${template.templateUrl}');
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-size: 100% 100%;
     }
     .field { position: absolute; white-space: nowrap; transform: translate(-50%, -50%); }
   </style>
