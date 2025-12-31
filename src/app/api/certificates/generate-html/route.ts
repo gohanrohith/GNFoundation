@@ -20,46 +20,36 @@ export async function POST(request: NextRequest) {
 
     const html = generateCertificateHTML(student, template);
 
-    // Dynamic imports
-    const puppeteer = (await import('puppeteer-core')).default;
-    const chromium = (await import('@sparticuz/chromium')).default;
+    // Use Gotenberg for PDF generation (deployed on Render.com)
+    const gotenbergUrl = process.env.GOTENBERG_URL || 'http://localhost:3000';
 
-    const isDev = process.env.NODE_ENV === 'development';
-    let browser;
+    // Prepare form data for Gotenberg
+    const formData = new FormData();
+    formData.append('files', new Blob([html], { type: 'text/html' }), 'index.html');
 
-    if (isDev) {
-      // Local development: use local Chrome
-      const chromePaths = [
-        'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
-        'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
-      ];
-
-      browser = await puppeteer.launch({
-        headless: true,
-        executablePath: chromePaths[0],
-        args: ['--no-sandbox', '--disable-setuid-sandbox'],
-      });
-    } else {
-      // Production: use @sparticuz/chromium (version 119.0.2 tested with puppeteer-core 21.6.1)
-      browser = await puppeteer.launch({
-        args: chromium.args,
-        defaultViewport: chromium.defaultViewport,
-        executablePath: await chromium.executablePath(),
-        headless: chromium.headless,
-      });
-    }
-
-    const page = await browser.newPage();
-    await page.setContent(html, { waitUntil: 'networkidle0' });
-
-    const pdfBuffer = await page.pdf({
-      format: 'A4',
-      landscape: template.orientation === 'landscape',
-      printBackground: true,
-      margin: { top: 0, right: 0, bottom: 0, left: 0 },
+    // Set PDF options
+    const searchParams = new URLSearchParams({
+      landscape: template.orientation === 'landscape' ? 'true' : 'false',
+      paperWidth: template.orientation === 'landscape' ? '11.69' : '8.27',
+      paperHeight: template.orientation === 'landscape' ? '8.27' : '11.69',
+      marginTop: '0',
+      marginBottom: '0',
+      marginLeft: '0',
+      marginRight: '0',
+      printBackground: 'true',
     });
 
-    await browser.close();
+    // Call Gotenberg API
+    const response = await fetch(`${gotenbergUrl}/forms/chromium/convert/html?${searchParams}`, {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error(`Gotenberg conversion failed: ${response.statusText}`);
+    }
+
+    const pdfBuffer = await response.arrayBuffer();
 
     return new NextResponse(Buffer.from(pdfBuffer), { 
       status: 200,

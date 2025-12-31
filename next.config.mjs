@@ -19,13 +19,8 @@ const nextConfig = {
     serverActions: {
       bodySizeLimit: '10mb',
     },
-    // Help Vercel trace chromium binaries
-    outputFileTracingIncludes: {
-      '/api/certificates/generate-html': ['./node_modules/@sparticuz/chromium/**/*'],
-    },
   },
-  // Exclude from webpack bundling (compatible versions: chromium@119.0.2 + puppeteer-core@21.6.1)
-  serverComponentsExternalPackages: ['puppeteer-core', '@sparticuz/chromium'],
+  // No chromium needed - using Gotenberg microservice for PDF generation
 };
 
 export default nextConfig;
