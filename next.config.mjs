@@ -19,6 +19,10 @@ const nextConfig = {
     serverActions: {
       bodySizeLimit: '10mb',
     },
+    // Help Vercel trace Chromium binaries for certificate generation
+    outputFileTracingIncludes: {
+      '/api/certificates/**': ['./node_modules/@sparticuz/chromium/**/*'],
+    },
   },
   // Exclude puppeteer and chromium from webpack bundling
   serverComponentsExternalPackages: ['puppeteer-core', '@sparticuz/chromium'],
