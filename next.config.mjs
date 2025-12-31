@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Standalone mode is highly recommended for projects using Chromium/Puppeteer
+  output: 'standalone',
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -19,12 +21,12 @@ const nextConfig = {
     serverActions: {
       bodySizeLimit: '10mb',
     },
-    // Help Vercel trace Chromium binaries for certificate generation
+    // Broaden the trace to ensure the 'bin' folder within the package is captured
     outputFileTracingIncludes: {
-      '/api/certificates/**': ['./node_modules/@sparticuz/chromium/**/*'],
+      '/api/certificates/**/*': ['node_modules/@sparticuz/chromium/**/*'],
     },
   },
-  // Exclude puppeteer and chromium from webpack bundling
+  // Ensure these are not bundled by Webpack to allow the binary to be found at the system level
   serverComponentsExternalPackages: ['puppeteer-core', '@sparticuz/chromium'],
 };
 
