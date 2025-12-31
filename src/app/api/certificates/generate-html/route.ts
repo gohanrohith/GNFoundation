@@ -1,7 +1,5 @@
 // src/app/api/certificates/generate-html/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import puppeteer from 'puppeteer-core';
-import chromium from '@sparticuz/chromium';
 import connectDB from '@/lib/mongodb';
 import Student from '@/models/Student';
 import CertificateTemplate from '@/models/CertificateTemplate';
@@ -9,6 +7,7 @@ import CertificateTemplate from '@/models/CertificateTemplate';
 // Set max duration for serverless function (Vercel)
 export const maxDuration = 60; // 60 seconds
 export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 
 export async function POST(request: NextRequest) {
   try {
@@ -22,6 +21,10 @@ export async function POST(request: NextRequest) {
     if (!template) return NextResponse.json({ error: 'Template not found' }, { status: 404 });
 
     const html = generateCertificateHTML(student, template);
+
+    // Dynamically import puppeteer and chromium only at runtime
+    const puppeteer = (await import('puppeteer-core')).default;
+    const chromium = (await import('@sparticuz/chromium')).default;
 
     // Determine if we're in development or production
     const isDev = process.env.NODE_ENV === 'development';
