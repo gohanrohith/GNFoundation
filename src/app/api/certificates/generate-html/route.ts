@@ -30,23 +30,21 @@ export async function POST(request: NextRequest) {
     // Set PDF options for Gotenberg
     const isLandscape = template.orientation === 'landscape';
 
-    const searchParams = new URLSearchParams({
+    // Build query parameters
+    const params = {
       marginTop: '0',
       marginBottom: '0',
       marginLeft: '0',
       marginRight: '0',
       printBackground: 'true',
-    });
+    };
 
-    // Add landscape and paper size based on orientation
+    // Add orientation-specific params
     if (isLandscape) {
-      searchParams.append('landscape', 'true');
-      searchParams.append('paperWidth', '11.69');
-      searchParams.append('paperHeight', '8.27');
-    } else {
-      searchParams.append('paperWidth', '8.27');
-      searchParams.append('paperHeight', '11.69');
+      params.landscape = 'true';
     }
+
+    const searchParams = new URLSearchParams(params);
 
     // Call Gotenberg API
     const response = await fetch(`${gotenbergUrl}/forms/chromium/convert/html?${searchParams}`, {
@@ -90,6 +88,10 @@ function generateCertificateHTML(student: any, template: any) {
 <html>
 <head>
   <style>
+    @page {
+      size: ${isLandscape ? '297mm 210mm' : '210mm 297mm'};
+      margin: 0;
+    }
     body { margin: 0; padding: 0; width: ${isLandscape ? '297mm' : '210mm'}; height: ${isLandscape ? '210mm' : '297mm'}; position: relative; }
     .bg { position: absolute; width: 100%; height: 100%; background: url('${template.templateUrl}') no-repeat center/cover; }
     .field { position: absolute; white-space: nowrap; transform: translate(-50%, -50%); }
