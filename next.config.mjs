@@ -19,9 +19,13 @@ const nextConfig = {
     serverActions: {
       bodySizeLimit: '10mb',
     },
+    // Help Vercel trace chromium binaries
+    outputFileTracingIncludes: {
+      '/api/certificates/generate-html': ['./node_modules/@sparticuz/chromium/**/*'],
+    },
   },
-  // Keep puppeteer-core external (Browserless.io handles the browser)
-  serverComponentsExternalPackages: ['puppeteer-core'],
+  // Exclude from webpack bundling (compatible versions: chromium@119.0.2 + puppeteer-core@21.6.1)
+  serverComponentsExternalPackages: ['puppeteer-core', '@sparticuz/chromium'],
 };
 
 export default nextConfig;

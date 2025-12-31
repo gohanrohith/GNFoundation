@@ -20,8 +20,9 @@ export async function POST(request: NextRequest) {
 
     const html = generateCertificateHTML(student, template);
 
-    // Dynamic import puppeteer
+    // Dynamic imports
     const puppeteer = (await import('puppeteer-core')).default;
+    const chromium = (await import('@sparticuz/chromium')).default;
 
     const isDev = process.env.NODE_ENV === 'development';
     let browser;
@@ -39,16 +40,12 @@ export async function POST(request: NextRequest) {
         args: ['--no-sandbox', '--disable-setuid-sandbox'],
       });
     } else {
-      // Production: use Browserless.io remote browser service
-      // This eliminates the need for @sparticuz/chromium and fixes Vercel deployment
-      const browserlessToken = process.env.BROWSERLESS_TOKEN;
-
-      if (!browserlessToken) {
-        throw new Error('BROWSERLESS_TOKEN environment variable is required for production');
-      }
-
-      browser = await puppeteer.connect({
-        browserWSEndpoint: `wss://chrome.browserless.io?token=${browserlessToken}`,
+      // Production: use @sparticuz/chromium (version 119.0.2 tested with puppeteer-core 21.6.1)
+      browser = await puppeteer.launch({
+        args: chromium.args,
+        defaultViewport: chromium.defaultViewport,
+        executablePath: await chromium.executablePath(),
+        headless: chromium.headless,
       });
     }
 
