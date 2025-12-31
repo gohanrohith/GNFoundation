@@ -23,13 +23,35 @@ export async function POST(request: NextRequest) {
 
     const html = generateCertificateHTML(student, template);
 
-    // Use chromium for serverless environments (Vercel)
-    const browser = await puppeteer.launch({
-      args: chromium.args,
-      defaultViewport: chromium.defaultViewport,
-      executablePath: await chromium.executablePath(),
-      headless: chromium.headless,
-    });
+    // Determine if we're in development or production
+    const isDev = process.env.NODE_ENV === 'development';
+
+    // Configure browser launch options based on environment
+    let launchOptions;
+    if (isDev) {
+      // For local development, try to find Chrome on Windows
+      const chromePaths = [
+        'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
+        'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
+        process.env.CHROME_PATH, // Allow custom path via env variable
+      ].filter(Boolean);
+
+      launchOptions = {
+        headless: true,
+        executablePath: chromePaths[0], // Use first available path
+        args: ['--no-sandbox', '--disable-setuid-sandbox'],
+      };
+    } else {
+      // Use chromium for serverless environments (Vercel)
+      launchOptions = {
+        args: chromium.args,
+        defaultViewport: chromium.defaultViewport,
+        executablePath: await chromium.executablePath(),
+        headless: chromium.headless,
+      };
+    }
+
+    const browser = await puppeteer.launch(launchOptions);
 
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: 'networkidle0' });

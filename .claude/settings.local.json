@@ -28,7 +28,10 @@
       "Bash(git commit:*)",
       "Bash(git branch:*)",
       "Bash(git push:*)",
-      "Bash(git rm:*)"
+      "Bash(git rm:*)",
+      "Bash(npm audit fix:*)",
+      "Bash(if exist node_modules.cache rd /s /q node_modules.cache)",
+      "Bash(test -f:*)"
     ]
   }
 }
