@@ -1,0 +1,64 @@
+{
+  "placeholderImages": [
+    {
+      "id": "hero",
+      "description": "A star icon representing success.",
+      "imageUrl": "https://cdn.pixabay.com/photo/2022/12/12/03/03/working-7650053_1280.png",
+      "imageHint": "star success"
+    },
+    {
+      "id": "girrem-narayanamma",
+      "description": "Smt. Girrem Narayanamma",
+      "imageUrl": "/docs/GN.jpg",
+      "imageHint": "Girrem Narayanamma portrait"
+    },
+    {
+      "id": "awardee-1",
+      "description": "A smiling student holding a trophy.",
+      "imageUrl": "https://images.unsplash.com/photo-1761469354504-8d14b3a33757?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxzdHVkZW50JTIwYXdhcmR8ZW58MHx8fHwxNzY1NjIyNTUyfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "student award"
+    },
+    {
+      "id": "awardee-2",
+      "description": "A young girl with glasses smiling at the camera.",
+      "imageUrl": "https://images.unsplash.com/photo-1707946159631-8bf54b026ece?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxnaXJsJTIwc3R1ZGVudHxlbnwwfHx8fDE3NjU2MjI1NTJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "girl student"
+    },
+    {
+      "id": "awardee-3",
+      "description": "A teenage boy looking thoughtful.",
+      "imageUrl": "https://images.unsplash.com/photo-1693011142814-aa33d7d1535c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxib3klMjBzdHVkZW50fGVufDB8fHx8MTc2NTYyMjU1MXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "boy student"
+    },
+    {
+      "id": "awardee-4",
+      "description": "A student receiving a certificate on stage.",
+      "imageUrl": "https://images.unsplash.com/photo-1658235081614-c47102fdd7a5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxzdHVkZW50JTIwY2VydGlmaWNhdGV8ZW58MHx8fHwxNzY1NjIyNTUyfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "student certificate"
+    },
+    {
+      "id": "math-icon",
+      "description": "A vibrant icon representing mathematics.",
+      "imageUrl": "https://images.unsplash.com/photo-1747654804495-bbb2ba3209f1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8bWF0aGVtYXRpY3MlMjBhYnN0cmFjdHxlbnwwfHx8fDE3NjU1NTQxNTl8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "mathematics abstract"
+    },
+    {
+      "id": "science-icon",
+      "description": "A vibrant icon representing science, like an atom or beaker.",
+      "imageUrl": "https://images.unsplash.com/photo-1485368510545-b1f4bcd02d0d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxzY2llbmNlJTIwYWJzdHJhY3R8ZW58MHx8fHwxNzY1NTU0NTQzfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "science abstract"
+    },
+    {
+      "id": "cert-rmth",
+      "description": "Certificate template for RMTH exam.",
+      "imageUrl": "https://images.unsplash.com/photo-1661523892060-c9ab9eac3291?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxjZXJ0aWZpY2F0ZSUyMHRlbXBsYXRlfGVufDB8fHx8MTc2NjIxMTUxM3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "certificate template"
+    },
+    {
+      "id": "cert-rsth",
+      "description": "Certificate template for RSTH exam.",
+      "imageUrl": "https://images.unsplash.com/photo-1616861771635-49063a4636ed?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxjZXJ0aWZpY2F0ZSUyMHRlbXBsYXRlfGVufDB8fHx8MTc2NjIxMTUxM3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "certificate template"
+    }
+  ]
+}

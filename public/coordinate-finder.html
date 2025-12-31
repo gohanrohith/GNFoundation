@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Coordinate Finder - GN Foundation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .instructions {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #2196f3;
+        }
+        .canvas-container {
+            position: relative;
+            display: inline-block;
+            border: 2px solid #333;
+            margin: 20px 0;
+            background: white;
+        }
+        canvas {
+            display: block;
+            cursor: crosshair;
+        }
+        .coordinates {
+            position: absolute;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-size: 12px;
+            pointer-events: none;
+            display: none;
+        }
+        .info-panel {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .field-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .field-item {
+            background: white;
+            padding: 12px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        .field-item.clicked {
+            background: #e8f5e9;
+            border-color: #4caf50;
+        }
+        .field-name {
+            font-weight: bold;
+            color: #2196f3;
+            margin-bottom: 5px;
+        }
+        .field-coords {
+            font-family: monospace;
+            font-size: 14px;
+            color: #666;
+        }
+        button {
+            background: #2196f3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background: #1976d2;
+        }
+        .reset-btn {
+            background: #f44336;
+        }
+        .reset-btn:hover {
+            background: #d32f2f;
+        }
+        .copy-btn {
+            background: #4caf50;
+            padding: 5px 10px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+        #fileInput {
+            margin: 10px 0;
+        }
+        .current-field {
+            background: #fff3cd;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            border-left: 4px solid #ffc107;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Certificate Coordinate Finder</h1>
+
+        <div class="instructions">
+            <h3>How to use:</h3>
+            <ol>
+                <li>Upload your certificate PDF below</li>
+                <li>Click on the PDF where you want each field to appear</li>
+                <li>The coordinates will be displayed and saved automatically</li>
+                <li>Copy the coordinates and paste them in the Admin Panel's "Configure Fields" dialog</li>
+            </ol>
+            <p><strong>Note:</strong> PDF coordinates start from BOTTOM-LEFT corner (0,0). Higher Y values = move UP.</p>
+        </div>
+
+        <input type="file" id="fileInput" accept="application/pdf" />
+
+        <div class="current-field" id="currentField">
+            Click "Start" to begin placing fields. Current field: <strong>Admission Number</strong>
+        </div>
+
+        <button id="startBtn">Start Placing Fields</button>
+        <button id="resetBtn" class="reset-btn">Reset All</button>
+
+        <div class="canvas-container" id="canvasContainer" style="display: none;">
+            <canvas id="pdfCanvas"></canvas>
+            <div class="coordinates" id="coordDisplay"></div>
+        </div>
+
+        <div class="info-panel">
+            <h3>Field Coordinates (Click on PDF to set positions):</h3>
+            <div class="field-list" id="fieldList">
+                <div class="field-item" data-field="admissionNumber">
+                    <div class="field-name">Admission Number</div>
+                    <div class="field-coords" id="coord-admissionNumber">Not set</div>
+                </div>
+                <div class="field-item" data-field="studentName">
+                    <div class="field-name">Student Name</div>
+                    <div class="field-coords" id="coord-studentName">Not set</div>
+                </div>
+                <div class="field-item" data-field="school">
+                    <div class="field-name">School</div>
+                    <div class="field-coords" id="coord-school">Not set</div>
+                </div>
+                <div class="field-item" data-field="class">
+                    <div class="field-name">Class</div>
+                    <div class="field-coords" id="coord-class">Not set</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+        const fields = ['admissionNumber', 'studentName', 'school', 'class'];
+        const fieldNames = {
+            admissionNumber: 'Admission Number',
+            studentName: 'Student Name',
+            school: 'School',
+            class: 'Class'
+        };
+        const defaultFontSizes = {
+            admissionNumber: 12,
+            studentName: 18,
+            school: 12,
+            class: 12
+        };
+
+        let currentFieldIndex = 0;
+        let isPlacing = false;
+        let pdfPage = null;
+        let canvas = document.getElementById('pdfCanvas');
+        let ctx = canvas.getContext('2d');
+        let scale = 1.5;
+
+        const coordinates = {};
+
+        document.getElementById('fileInput').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const fileReader = new FileReader();
+            fileReader.onload = async function() {
+                const typedArray = new Uint8Array(this.result);
+                const pdf = await pdfjsLib.getDocument(typedArray).promise;
+                pdfPage = await pdf.getPage(1);
+
+                const viewport = pdfPage.getViewport({ scale: scale });
+                canvas.width = viewport.width;
+                canvas.height = viewport.height;
+
+                const renderContext = {
+                    canvasContext: ctx,
+                    viewport: viewport
+                };
+                await pdfPage.render(renderContext).promise;
+
+                document.getElementById('canvasContainer').style.display = 'inline-block';
+            };
+            fileReader.readAsArrayBuffer(file);
+        });
+
+        document.getElementById('startBtn').addEventListener('click', () => {
+            isPlacing = true;
+            currentFieldIndex = 0;
+            updateCurrentField();
+        });
+
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            if (confirm('Reset all coordinates?')) {
+                currentFieldIndex = 0;
+                isPlacing = false;
+                for (let field of fields) {
+                    coordinates[field] = null;
+                    document.getElementById(`coord-${field}`).textContent = 'Not set';
+                    document.querySelector(`[data-field="${field}"]`).classList.remove('clicked');
+                }
+                updateCurrentField();
+            }
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            // Convert canvas coordinates to PDF coordinates
+            const pdfX = Math.round((x / scale));
+            const pdfY = Math.round(canvas.height / scale - (y / scale));
+
+            const coordDisplay = document.getElementById('coordDisplay');
+            coordDisplay.textContent = `X: ${pdfX}, Y: ${pdfY}`;
+            coordDisplay.style.display = 'block';
+            coordDisplay.style.left = (e.clientX - rect.left + 10) + 'px';
+            coordDisplay.style.top = (e.clientY - rect.top + 10) + 'px';
+        });
+
+        canvas.addEventListener('mouseleave', () => {
+            document.getElementById('coordDisplay').style.display = 'none';
+        });
+
+        canvas.addEventListener('click', (e) => {
+            if (!isPlacing || currentFieldIndex >= fields.length) return;
+
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            // Convert to PDF coordinates
+            const pdfX = Math.round((x / scale));
+            const pdfY = Math.round(canvas.height / scale - (y / scale));
+
+            const field = fields[currentFieldIndex];
+            const fontSize = defaultFontSizes[field];
+
+            coordinates[field] = { x: pdfX, y: pdfY, fontSize: fontSize };
+
+            // Update display
+            const coordText = `X: ${pdfX}, Y: ${pdfY}, Font: ${fontSize}`;
+            document.getElementById(`coord-${field}`).textContent = coordText;
+            document.querySelector(`[data-field="${field}"]`).classList.add('clicked');
+
+            // Move to next field
+            currentFieldIndex++;
+            updateCurrentField();
+
+            // Show completion message
+            if (currentFieldIndex >= fields.length) {
+                isPlacing = false;
+                alert('All fields positioned! Copy the coordinates below and paste them in the Admin Panel.');
+            }
+        });
+
+        function updateCurrentField() {
+            const currentFieldDiv = document.getElementById('currentField');
+            if (isPlacing && currentFieldIndex < fields.length) {
+                const fieldName = fieldNames[fields[currentFieldIndex]];
+                currentFieldDiv.innerHTML = `Click on the PDF where <strong>${fieldName}</strong> should appear`;
+                currentFieldDiv.style.display = 'block';
+            } else if (currentFieldIndex >= fields.length) {
+                currentFieldDiv.innerHTML = '<strong>All fields placed!</strong> Copy coordinates below.';
+                currentFieldDiv.style.background = '#d4edda';
+                currentFieldDiv.style.borderColor = '#28a745';
+            } else {
+                currentFieldDiv.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

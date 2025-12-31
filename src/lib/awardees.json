@@ -1,0 +1,69 @@
+
+{
+  "awardees": [
+    {
+      "name": "Ananya Sharma",
+      "award": "1st Rank, RMTH",
+      "imageId": "awardee-1",
+      "year": 2023,
+      "school": "S-Greenwood School, Main Campus",
+      "class": "10th Class"
+    },
+    {
+      "name": "Rohan Verma",
+      "award": "1st Rank, RSTH",
+      "imageId": "awardee-3",
+      "year": 2023,
+      "school": "S-Greenwood School, North Campus",
+      "class": "9th Class"
+    },
+    {
+      "name": "Priya Singh",
+      "award": "2nd Rank, RSTH",
+      "imageId": "awardee-2",
+      "year": 2023,
+      "school": "Oakridge International",
+      "class": "10th Class"
+    },
+    {
+      "name": "Sameer Khan",
+      "award": "Top Performer",
+      "imageId": "awardee-4",
+      "year": 2022,
+      "school": "S-Greenwood School, Main Campus",
+      "class": "8th Class"
+    },
+    {
+      "name": "Aditya Rao",
+      "award": "3rd Rank, RMTH",
+      "imageId": "awardee-3",
+      "year": 2022,
+      "school": "S-Greenwood School, North Campus",
+      "class": "10th Class"
+    },
+    {
+      "name": "Isha Reddy",
+      "award": "Honorable Mention",
+      "imageId": "awardee-1",
+      "year": 2023,
+      "school": "S-Greenwood School, Main Campus",
+      "class": "7th Class"
+    },
+    {
+      "name": "Vikram Kumar",
+      "award": "2nd Rank, RMTH",
+      "imageId": "awardee-4",
+      "year": 2022,
+      "school": "Oakridge International",
+      "class": "9th Class"
+    },
+    {
+      "name": "Meera Desai",
+      "award": "Top Performer",
+      "imageId": "awardee-2",
+      "year": 2023,
+      "school": "S-Greenwood School, North Campus",
+      "class": "8th Class"
+    }
+  ]
+}

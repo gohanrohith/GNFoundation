@@ -1,0 +1,30 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install)",
+      "Bash(npm install:*)",
+      "Bash(node test-db-connection.js:*)",
+      "Bash(npm run dev:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(taskkill:*)",
+      "Bash(npx next dev -p 3000)",
+      "Bash(timeout 10 cmd:*)",
+      "Bash(ls:*)",
+      "Bash(npx next dev -p 7000)",
+      "Bash(tasklist:*)",
+      "Bash(node check-student-data.js:*)",
+      "Bash(node clean-student-data.js:*)",
+      "Bash(node check-template-positions.js:*)",
+      "Bash(npx kill-port:*)",
+      "Bash(npm run typecheck:*)",
+      "Bash(tree /F /A G:GNFoundation)",
+      "Bash(dir:*)",
+      "Bash(grep:*)",
+      "Bash(timeout:*)",
+      "Bash(git init:*)",
+      "Bash(git remote add:*)",
+      "Bash(git add:*)"
+    ]
+  }
+}
