@@ -1,3 +1,8 @@
+// TEMPORARILY DISABLED: This route uses puppeteer/chromium which causes Vercel build errors
+// Using /api/certificates/generate (pdf-lib) instead, which works reliably on serverless
+// If needed in the future, consider using an external PDF generation service
+
+/*
 // src/app/api/certificates/generate-html/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
@@ -68,7 +73,7 @@ export async function POST(request: NextRequest) {
 
     await browser.close();
         // Explicitly wrap the Uint8Array in a Buffer
-    return new NextResponse(Buffer.from(pdfBuffer), { 
+    return new NextResponse(Buffer.from(pdfBuffer), {
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',
@@ -90,10 +95,10 @@ function generateCertificateHTML(student: any, template: any) {
   };
 
   const isLandscape = template.orientation === 'landscape';
-  
+
   // Scale factor: UI font sizes (e.g. 28px) are designed on small screens.
   // On a real A4 PDF at 96dpi, we need to boost this slightly for readability.
-  const scaleFactor = 1.25; 
+  const scaleFactor = 1.25;
 
   return `
 <!DOCTYPE html>
@@ -102,10 +107,10 @@ function generateCertificateHTML(student: any, template: any) {
   <style>
     body { margin: 0; padding: 0; width: ${isLandscape ? '297mm' : '210mm'}; height: ${isLandscape ? '210mm' : '297mm'}; position: relative; }
     .bg { position: absolute; width: 100%; height: 100%; background: url('${template.templateUrl}') no-repeat center/cover; }
-    .field { 
-        position: absolute; 
-        white-space: nowrap; 
-        transform: translate(-50%, -50%); /* Match the builder's anchor point */
+    .field {
+        position: absolute;
+        white-space: nowrap;
+        transform: translate(-50%, -50%);
     }
   </style>
 </head>
@@ -113,10 +118,10 @@ function generateCertificateHTML(student: any, template: any) {
   <div class="bg"></div>
   ${fields.map((f: any) => `
     <div class="field" style="
-        left: ${f.x}%; 
-        top: ${f.y}%; 
-        font-size: ${f.fontSize * scaleFactor}px; 
-        font-family: ${f.fontFamily}; 
+        left: ${f.x}%;
+        top: ${f.y}%;
+        font-size: ${f.fontSize * scaleFactor}px;
+        font-family: ${f.fontFamily};
         color: ${f.color};
         font-weight: ${f.id === 'studentName' ? 'bold' : 'normal'};
     ">
@@ -125,3 +130,4 @@ function generateCertificateHTML(student: any, template: any) {
 </body>
 </html>`;
 }
+*/
