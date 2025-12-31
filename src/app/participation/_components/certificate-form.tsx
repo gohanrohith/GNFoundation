@@ -56,7 +56,7 @@ export function CertificateForm({ examType }: CertificateFormProps) {
 
     setIsDownloading(true);
     try {
-      const response = await fetch('/api/certificates/generate', {
+      const response = await fetch('/api/certificates/generate-html', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

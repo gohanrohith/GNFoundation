@@ -46,59 +46,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Download template from Cloudinary (can be PDF or image)
+    // Download template PDF from Cloudinary
     const templateResponse = await fetch(template.templateUrl);
     if (!templateResponse.ok) {
       throw new Error('Failed to download certificate template');
     }
     const templateBytes = await templateResponse.arrayBuffer();
 
-    // Create or load PDF document
-    let pdfDoc: PDFDocument;
-    let firstPage;
-    let width: number;
-    let height: number;
-
-    // Check if template is an image or PDF based on content type or by trying to load
-    const contentType = templateResponse.headers.get('content-type') || '';
-    const isImage = contentType.includes('image') || template.templateUrl.match(/\.(png|jpg|jpeg)$/i);
-
-    if (isImage) {
-      // Create a new PDF with the image as background
-      pdfDoc = await PDFDocument.create();
-
-      // Determine image type and embed
-      let image;
-      if (contentType.includes('png') || template.templateUrl.match(/\.png$/i)) {
-        image = await pdfDoc.embedPng(templateBytes);
-      } else {
-        image = await pdfDoc.embedJpg(templateBytes);
-      }
-
-      // Get image dimensions
-      const { width: imgWidth, height: imgHeight } = image.scale(1);
-
-      // Create page with image dimensions
-      firstPage = pdfDoc.addPage([imgWidth, imgHeight]);
-      width = imgWidth;
-      height = imgHeight;
-
-      // Draw the image as background
-      firstPage.drawImage(image, {
-        x: 0,
-        y: 0,
-        width: imgWidth,
-        height: imgHeight,
-      });
-    } else {
-      // Load existing PDF template
-      pdfDoc = await PDFDocument.load(templateBytes);
-      const pages = pdfDoc.getPages();
-      firstPage = pages[0];
-      const pageSize = firstPage.getSize();
-      width = pageSize.width;
-      height = pageSize.height;
-    }
+    // Load PDF template
+    const pdfDoc = await PDFDocument.load(templateBytes);
+    const pages = pdfDoc.getPages();
+    const firstPage = pages[0];
+    const { height } = firstPage.getSize();
 
     // Embed fonts
     const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
@@ -130,22 +89,13 @@ export async function POST(request: NextRequest) {
       if (!text || !position) return;
 
       // Validate position values
-      let x = Number(position.x);
-      let y = Number(position.y);
+      const x = Number(position.x);
+      const y = Number(position.y);
       const fontSize = Number(position.fontSize) || 12;
 
       if (isNaN(x) || isNaN(y) || isNaN(fontSize)) {
         console.warn(`Invalid position values for text "${text}":`, position);
         return;
-      }
-
-      // Convert percentages to pixels if values are between 0-100
-      // (Assuming positions are stored as percentages from admin panel)
-      if (x <= 100) {
-        x = (x / 100) * width;
-      }
-      if (y <= 100) {
-        y = (y / 100) * height;
       }
 
       firstPage.drawText(text, {
