@@ -27,17 +27,26 @@ export async function POST(request: NextRequest) {
     const formData = new FormData();
     formData.append('files', new Blob([html], { type: 'text/html' }), 'index.html');
 
-    // Set PDF options
+    // Set PDF options for Gotenberg
+    const isLandscape = template.orientation === 'landscape';
+
     const searchParams = new URLSearchParams({
-      landscape: template.orientation === 'landscape' ? 'true' : 'false',
-      paperWidth: template.orientation === 'landscape' ? '11.69' : '8.27',
-      paperHeight: template.orientation === 'landscape' ? '8.27' : '11.69',
       marginTop: '0',
       marginBottom: '0',
       marginLeft: '0',
       marginRight: '0',
       printBackground: 'true',
     });
+
+    // Add landscape and paper size based on orientation
+    if (isLandscape) {
+      searchParams.append('landscape', 'true');
+      searchParams.append('paperWidth', '11.69');
+      searchParams.append('paperHeight', '8.27');
+    } else {
+      searchParams.append('paperWidth', '8.27');
+      searchParams.append('paperHeight', '11.69');
+    }
 
     // Call Gotenberg API
     const response = await fetch(`${gotenbergUrl}/forms/chromium/convert/html?${searchParams}`, {
