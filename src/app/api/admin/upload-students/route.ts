@@ -3,12 +3,6 @@ import * as XLSX from 'xlsx';
 import connectDB from '@/lib/mongodb';
 import Student from '@/models/Student';
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
-
 export async function POST(request: NextRequest) {
   try {
     // Get the form data
