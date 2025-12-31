@@ -1,7 +1,8 @@
 'use client';
 
-import { useActionState, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import * as React from 'react';
+import { useFormState } from 'react-dom';
 import Image from 'next/image';
 import { useToast } from '@/hooks/use-toast';
 import { replaceTemplate } from '../actions';
@@ -22,7 +23,7 @@ export function TemplateUploadCard({ templateType, templateImage }: TemplateUplo
   const { toast } = useToast();
   const formRef = useRef<HTMLFormElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [state, formAction] = useActionState(replaceTemplate, { success: false, message: '' });
+  const [state, formAction] = useFormState(replaceTemplate, { success: false, message: '' });
   const [isPending, startTransition] = React.useTransition();
 
   useEffect(() => {

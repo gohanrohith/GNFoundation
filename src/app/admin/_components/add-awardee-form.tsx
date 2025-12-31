@@ -1,7 +1,7 @@
 'use client';
 
-import { useFormStatus } from 'react-dom';
-import { useActionState, useEffect, useRef } from 'react';
+import { useFormStatus, useFormState } from 'react-dom';
+import { useEffect, useRef } from 'react';
 import { addAwardee } from '../actions';
 import { useToast } from '@/hooks/use-toast';
 
@@ -27,7 +27,7 @@ export function AddAwardeeForm() {
   const { toast } = useToast();
   const formRef = useRef<HTMLFormElement>(null);
 
-  const [state, formAction] = useActionState(addAwardee, {
+  const [state, formAction] = useFormState(addAwardee, {
     success: false,
     message: '',
   });

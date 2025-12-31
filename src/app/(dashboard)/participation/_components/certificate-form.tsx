@@ -1,7 +1,7 @@
 'use client';
 
-import { useFormStatus } from 'react-dom';
-import { useActionState, useEffect, useRef, useState } from 'react';
+import { useFormStatus, useFormState } from 'react-dom';
+import { useEffect, useRef, useState } from 'react';
 import { findCertificate, type FormState } from '../actions';
 
 import { Button } from '@/components/ui/button';
@@ -33,7 +33,7 @@ interface CertificateFormProps {
 }
 
 export function CertificateForm({ examType }: CertificateFormProps) {
-  const [state, formAction] = useActionState(findCertificate, initialState);
+  const [state, formAction] = useFormState(findCertificate, initialState);
   const formRef = useRef<HTMLFormElement>(null);
   const [isDownloading, setIsDownloading] = useState(false);
   const { toast } = useToast();

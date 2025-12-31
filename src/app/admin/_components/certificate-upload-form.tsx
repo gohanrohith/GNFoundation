@@ -1,7 +1,7 @@
 'use client';
 
-import { useFormStatus } from 'react-dom';
-import { useActionState, useEffect, useRef } from 'react';
+import { useFormStatus, useFormState } from 'react-dom';
+import { useEffect, useRef } from 'react';
 import { uploadCertificateData } from '../actions';
 import { useToast } from '@/hooks/use-toast';
 
@@ -30,7 +30,7 @@ export function CertificateUploadForm() {
   const formRef = useRef<HTMLFormElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const [state, formAction] = useActionState(uploadCertificateData, {
+  const [state, formAction] = useFormState(uploadCertificateData, {
     success: false,
     message: '',
   });
