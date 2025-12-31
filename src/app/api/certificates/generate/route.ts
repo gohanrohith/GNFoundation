@@ -46,18 +46,55 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Download template PDF from Cloudinary
+    // Download template from Cloudinary (can be PDF or image)
     const templateResponse = await fetch(template.templateUrl);
     if (!templateResponse.ok) {
       throw new Error('Failed to download certificate template');
     }
     const templateBytes = await templateResponse.arrayBuffer();
 
-    // Load PDF template
-    const pdfDoc = await PDFDocument.load(templateBytes);
-    const pages = pdfDoc.getPages();
-    const firstPage = pages[0];
-    const { height } = firstPage.getSize();
+    // Create or load PDF document
+    let pdfDoc: PDFDocument;
+    let firstPage;
+    let height: number;
+
+    // Check if template is an image or PDF based on content type or by trying to load
+    const contentType = templateResponse.headers.get('content-type') || '';
+    const isImage = contentType.includes('image') || template.templateUrl.match(/\.(png|jpg|jpeg)$/i);
+
+    if (isImage) {
+      // Create a new PDF with the image as background
+      pdfDoc = await PDFDocument.create();
+
+      // Determine image type and embed
+      let image;
+      if (contentType.includes('png') || template.templateUrl.match(/\.png$/i)) {
+        image = await pdfDoc.embedPng(templateBytes);
+      } else {
+        image = await pdfDoc.embedJpg(templateBytes);
+      }
+
+      // Get image dimensions
+      const { width: imgWidth, height: imgHeight } = image.scale(1);
+
+      // Create page with image dimensions
+      firstPage = pdfDoc.addPage([imgWidth, imgHeight]);
+      height = imgHeight;
+
+      // Draw the image as background
+      firstPage.drawImage(image, {
+        x: 0,
+        y: 0,
+        width: imgWidth,
+        height: imgHeight,
+      });
+    } else {
+      // Load existing PDF template
+      pdfDoc = await PDFDocument.load(templateBytes);
+      const pages = pdfDoc.getPages();
+      firstPage = pages[0];
+      height = firstPage.getSize().height;
+    }
 
     // Embed fonts
     const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
