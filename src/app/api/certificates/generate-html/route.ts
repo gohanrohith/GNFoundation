@@ -20,15 +20,14 @@ export async function POST(request: NextRequest) {
 
     const html = generateCertificateHTML(student, template);
 
-    // Dynamic imports are crucial for serverless functions to keep initial load small
+    // Dynamic import puppeteer
     const puppeteer = (await import('puppeteer-core')).default;
-    const chromium = (await import('@sparticuz/chromium')).default;
 
     const isDev = process.env.NODE_ENV === 'development';
-
     let browser;
 
     if (isDev) {
+      // Local development: use local Chrome
       const chromePaths = [
         'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
         'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
@@ -40,14 +39,16 @@ export async function POST(request: NextRequest) {
         args: ['--no-sandbox', '--disable-setuid-sandbox'],
       });
     } else {
-      // In production, we MUST use the path provided by the @sparticuz/chromium helper
-      const executablePath = await chromium.executablePath();
-      
-      browser = await puppeteer.launch({
-        args: chromium.args,
-        defaultViewport: chromium.defaultViewport,
-        executablePath: executablePath,
-        headless: chromium.headless,
+      // Production: use Browserless.io remote browser service
+      // This eliminates the need for @sparticuz/chromium and fixes Vercel deployment
+      const browserlessToken = process.env.BROWSERLESS_TOKEN;
+
+      if (!browserlessToken) {
+        throw new Error('BROWSERLESS_TOKEN environment variable is required for production');
+      }
+
+      browser = await puppeteer.connect({
+        browserWSEndpoint: `wss://chrome.browserless.io?token=${browserlessToken}`,
       });
     }
 
