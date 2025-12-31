@@ -88,12 +88,28 @@ function generateCertificateHTML(student: any, template: any) {
 <html>
 <head>
   <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     @page {
       size: ${isLandscape ? '297mm 210mm' : '210mm 297mm'};
       margin: 0;
     }
-    body { margin: 0; padding: 0; width: ${isLandscape ? '297mm' : '210mm'}; height: ${isLandscape ? '210mm' : '297mm'}; position: relative; }
-    .bg { position: absolute; width: 100%; height: 100%; background: url('${template.templateUrl}') no-repeat center/cover; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: ${isLandscape ? '297mm' : '210mm'};
+      height: ${isLandscape ? '210mm' : '297mm'};
+      overflow: hidden;
+    }
+    body { position: relative; }
+    .bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('${template.templateUrl}') no-repeat center/cover;
+      background-size: cover;
+    }
     .field { position: absolute; white-space: nowrap; transform: translate(-50%, -50%); }
   </style>
 </head>
