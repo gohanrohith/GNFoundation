@@ -1,9 +1,14 @@
 // src/app/api/certificates/generate-html/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import puppeteer from 'puppeteer';
+import puppeteer from 'puppeteer-core';
+import chromium from '@sparticuz/chromium';
 import connectDB from '@/lib/mongodb';
 import Student from '@/models/Student';
 import CertificateTemplate from '@/models/CertificateTemplate';
+
+// Set max duration for serverless function (Vercel)
+export const maxDuration = 60; // 60 seconds
+export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
   try {
@@ -18,7 +23,14 @@ export async function POST(request: NextRequest) {
 
     const html = generateCertificateHTML(student, template);
 
-    const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
+    // Use chromium for serverless environments (Vercel)
+    const browser = await puppeteer.launch({
+      args: chromium.args,
+      defaultViewport: chromium.defaultViewport,
+      executablePath: await chromium.executablePath(),
+      headless: chromium.headless,
+    });
+
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: 'networkidle0' });
 
