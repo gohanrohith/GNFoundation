@@ -1,6 +1,13 @@
+import type { Metadata } from 'next';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Card } from '@/components/ui/card';
+
+export const metadata: Metadata = {
+  title: 'About GN Foundation',
+  description:
+    'Learn about Smt. Girrem Narayanamma and the story behind the GN Foundation — dedicated to nurturing talent and promoting education for all.',
+};
 
 export default function AboutPage() {
   const founderImage = PlaceHolderImages.find(

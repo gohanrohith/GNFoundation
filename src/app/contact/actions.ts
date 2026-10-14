@@ -1,6 +1,7 @@
 'use server';
 
 import { z } from 'zod';
+import { sendContactEmail } from '@/lib/mailer';
 
 const schema = z.object({
   name: z.string().min(1, 'Name is required.'),
@@ -30,12 +31,27 @@ export async function submitContactForm(prevState: ContactFormState, formData: F
     };
   }
 
-  // Simulate sending an email or saving to a database
-  console.log('New contact form submission:', validatedFields.data);
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+  if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+    console.error('SMTP credentials not configured');
+    return {
+      success: false,
+      message: 'Email service is not configured. Please contact us directly at info@gnfoundation.com.',
+    };
+  }
 
-  return {
-    success: true,
-    message: 'Thank you for your message! We will get back to you shortly.',
-  };
+  try {
+    const { name, email, subject, message } = validatedFields.data;
+    await sendContactEmail({ senderName: name, senderEmail: email, subject, message });
+
+    return {
+      success: true,
+      message: 'Thank you for your message! We will get back to you shortly.',
+    };
+  } catch (error) {
+    console.error('Failed to send contact email:', error);
+    return {
+      success: false,
+      message: 'Failed to send your message. Please try again or email us directly at info@gnfoundation.com.',
+    };
+  }
 }

@@ -145,7 +145,7 @@ export function Header() {
                         <Link
                           href={link.href}
                           className={cn(
-                            'flex items-center gap-4 rounded-2xl px-6 py-4.5 text-base font-bold transition-all',
+                            'flex items-center gap-4 rounded-2xl px-6 py-4 text-base font-bold transition-all',
                             isActive
                               ? `bg-gradient-to-br ${brandGradient} text-white shadow-xl shadow-green-900/20 translate-x-2`
                               : 'text-muted-foreground hover:bg-green-50 hover:text-[#008000] active:scale-95'

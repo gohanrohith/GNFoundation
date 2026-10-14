@@ -26,7 +26,6 @@ interface Awardee {
   school: string;
   class: string;
   imageUrl?: string;
-  imageId: string;
   examType: 'RMTH' | 'RSTH';
   rank: number;
   marks?: number;
@@ -167,8 +166,8 @@ export default function AdminPage() {
         </TabsContent>
         <TabsContent value="certificates" className="space-y-8">
           <div className="space-y-6">
-            <VisualCertificateBuilder examType="RMTH" year={2025} />
-            <VisualCertificateBuilder examType="RSTH" year={2025} />
+            <VisualCertificateBuilder examType="RMTH" year={new Date().getFullYear()} />
+            <VisualCertificateBuilder examType="RSTH" year={new Date().getFullYear()} />
           </div>
 
           <Card>

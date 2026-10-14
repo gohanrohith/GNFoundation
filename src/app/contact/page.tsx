@@ -1,4 +1,10 @@
+import type { Metadata } from 'next';
 import { Mail, Phone, MapPin } from 'lucide-react';
+
+export const metadata: Metadata = {
+  title: 'Contact Us',
+  description: 'Get in touch with GN Foundation. We\'d love to hear from you — reach out with questions, feedback, or for assistance.',
+};
 import { ContactForm } from './_components/contact-form';
 
 export default function ContactPage() {
@@ -23,8 +29,8 @@ export default function ContactPage() {
               </div>
               <div className="flex items-center gap-4">
                 <Mail className="h-6 w-6 text-primary" />
-                <a href="mailto:info@gnfoundation.org" className="hover:text-primary transition-colors break-all">
-                  info@gnfoundation.org
+                <a href="mailto:info@gnfoundation.com" className="hover:text-primary transition-colors break-all">
+                  info@gnfoundation.com
                 </a>
               </div>
               <div className="flex items-center gap-4">

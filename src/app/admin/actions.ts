@@ -5,6 +5,7 @@ import { revalidatePath } from 'next/cache';
 import connectDB from '@/lib/mongodb';
 import Awardee from '@/models/Awardee';
 import { uploadToCloudinary } from '@/lib/cloudinary';
+import { verifyAuthForAction } from '@/lib/auth-server';
 
 const awardeeSchema = z.object({
   name: z.string().min(1, 'Name is required.'),
@@ -23,6 +24,8 @@ export type FormState = {
 };
 
 export async function addAwardee(prevState: FormState, formData: FormData): Promise<FormState> {
+  if (!verifyAuthForAction()) return { success: false, message: 'Unauthorized. Please log in again.' };
+
   const image = formData.get('image') as File;
 
   if (!image || image.size === 0) {
@@ -87,6 +90,8 @@ export async function addAwardee(prevState: FormState, formData: FormData): Prom
 }
 
 export async function uploadCertificateData(prevState: FormState, formData: FormData): Promise<FormState> {
+    if (!verifyAuthForAction()) return { success: false, message: 'Unauthorized. Please log in again.' };
+
     const file = formData.get('certificateFile') as File;
     const examType = formData.get('examType') as string;
     const year = formData.get('year') as string;
@@ -200,6 +205,8 @@ export async function uploadCertificateData(prevState: FormState, formData: Form
 
 
 export async function replaceTemplate(prevState: FormState, formData: FormData): Promise<FormState> {
+    if (!verifyAuthForAction()) return { success: false, message: 'Unauthorized. Please log in again.' };
+
     const file = formData.get('templateFile') as File;
     const templateType = formData.get('templateType') as string;
     const year = formData.get('year') as string;
@@ -266,6 +273,8 @@ export async function replaceTemplate(prevState: FormState, formData: FormData):
 }
 
 export async function deleteAwardee(awardeeId: string): Promise<FormState> {
+    if (!verifyAuthForAction()) return { success: false, message: 'Unauthorized. Please log in again.' };
+
     try {
         await connectDB();
 
@@ -295,6 +304,8 @@ export async function deleteAwardee(awardeeId: string): Promise<FormState> {
 }
 
 export async function updateAwardee(awardeeId: string, prevState: FormState, formData: FormData): Promise<FormState> {
+    if (!verifyAuthForAction()) return { success: false, message: 'Unauthorized. Please log in again.' };
+
     const validatedFields = awardeeSchema.safeParse({
         name: formData.get('name'),
         award: formData.get('award'),
@@ -364,6 +375,8 @@ export async function updateAwardee(awardeeId: string, prevState: FormState, for
 }
 
 export async function deleteCertificateTemplate(templateId: string): Promise<FormState> {
+    if (!verifyAuthForAction()) return { success: false, message: 'Unauthorized. Please log in again.' };
+
     try {
         await connectDB();
 
@@ -405,6 +418,8 @@ export async function deleteCertificateTemplate(templateId: string): Promise<For
 }
 
 export async function deleteInactiveCertificateTemplates(): Promise<FormState> {
+    if (!verifyAuthForAction()) return { success: false, message: 'Unauthorized. Please log in again.' };
+
     try {
         await connectDB();
 
@@ -465,6 +480,8 @@ const studentSchema = z.object({
 });
 
 export async function updateStudent(studentId: string, prevState: FormState, formData: FormData): Promise<FormState> {
+    if (!verifyAuthForAction()) return { success: false, message: 'Unauthorized. Please log in again.' };
+
     const validatedFields = studentSchema.safeParse({
         admissionNumber: formData.get('admissionNumber'),
         studentName: formData.get('studentName'),
@@ -519,6 +536,8 @@ export async function updateStudent(studentId: string, prevState: FormState, for
 }
 
 export async function deleteStudent(studentId: string): Promise<FormState> {
+    if (!verifyAuthForAction()) return { success: false, message: 'Unauthorized. Please log in again.' };
+
     try {
         await connectDB();
         const Student = (await import('@/models/Student')).default;

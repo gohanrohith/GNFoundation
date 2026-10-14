@@ -4,7 +4,8 @@ import { useState, useMemo, useEffect } from 'react';
 import Image from 'next/image';
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Award, FilterX, Search, Loader2 } from 'lucide-react';
+import { Award, FilterX, Search, Loader2, FlaskConical, Calculator } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 
@@ -53,6 +54,7 @@ export default function AwardsPage() {
   const [selectedYear, setSelectedYear] = useState<string>('all');
   const [selectedSchool, setSelectedSchool] = useState<string>('all');
   const [selectedClass, setSelectedClass] = useState<string>('all');
+  const [selectedExamType, setSelectedExamType] = useState<string>('all');
 
   const [hasSearched, setHasSearched] = useState(false);
 
@@ -62,14 +64,16 @@ export default function AwardsPage() {
       const yearMatch = selectedYear === 'all' || awardee.year.toString() === selectedYear;
       const schoolMatch = selectedSchool === 'all' || awardee.school === selectedSchool;
       const classMatch = selectedClass === 'all' || awardee.class === selectedClass;
-      return yearMatch && schoolMatch && classMatch;
+      const examMatch = selectedExamType === 'all' || awardee.examType === selectedExamType;
+      return yearMatch && schoolMatch && classMatch && examMatch;
     });
-  }, [selectedYear, selectedSchool, selectedClass, hasSearched]);
+  }, [selectedYear, selectedSchool, selectedClass, selectedExamType, hasSearched]);
 
   const resetFilters = () => {
     setSelectedYear('all');
     setSelectedSchool('all');
     setSelectedClass('all');
+    setSelectedExamType('all');
     setHasSearched(false);
   }
 
@@ -77,7 +81,7 @@ export default function AwardsPage() {
     setHasSearched(true);
   }
 
-  const hasActiveFilters = selectedYear !== 'all' || selectedSchool !== 'all' || selectedClass !== 'all';
+  const hasActiveFilters = selectedYear !== 'all' || selectedSchool !== 'all' || selectedClass !== 'all' || selectedExamType !== 'all';
 
   if (loading) {
     return (
@@ -111,6 +115,12 @@ export default function AwardsPage() {
                   </div>
                 )}
                 <CardHeader className="flex-grow p-4">
+                  <div className="flex justify-center mb-2">
+                    <Badge variant={awardee.examType === 'RMTH' ? 'default' : 'secondary'} className="text-xs">
+                      {awardee.examType === 'RMTH' ? <Calculator className="h-3 w-3 mr-1" /> : <FlaskConical className="h-3 w-3 mr-1" />}
+                      {awardee.examType}
+                    </Badge>
+                  </div>
                   <CardTitle className="text-lg sm:text-xl text-primary">{awardee.name}</CardTitle>
                   <CardDescription className="flex items-center justify-center gap-2 pt-1 text-accent-foreground/80 text-sm sm:text-base">
                     <Award className="h-4 w-4 text-accent" /> {awardee.award}
@@ -126,7 +136,7 @@ export default function AwardsPage() {
           </div>
         )}
       </div>
-      
+
       <Separator />
 
       <div>
@@ -138,7 +148,20 @@ export default function AwardsPage() {
         </div>
         
         <div className="mb-8 sm:mb-12 p-4 rounded-lg bg-card border shadow-sm">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4 items-end">
+            <div className="space-y-2">
+              <label htmlFor="exam-type-filter" className="text-sm font-medium text-muted-foreground">Exam Type</label>
+              <Select value={selectedExamType} onValueChange={setSelectedExamType}>
+                <SelectTrigger id="exam-type-filter">
+                  <SelectValue placeholder="Select Exam" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Exams</SelectItem>
+                  <SelectItem value="RMTH">RMTH — Maths</SelectItem>
+                  <SelectItem value="RSTH">RSTH — Science</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
             <div className="space-y-2">
               <label htmlFor="year-filter" className="text-sm font-medium text-muted-foreground">Year</label>
               <Select value={selectedYear} onValueChange={setSelectedYear}>
@@ -205,6 +228,12 @@ export default function AwardsPage() {
                     </div>
                   )}
                   <CardHeader className="flex-grow p-4">
+                    <div className="flex justify-center mb-2">
+                      <Badge variant={awardee.examType === 'RMTH' ? 'default' : 'secondary'} className="text-xs">
+                        {awardee.examType === 'RMTH' ? <Calculator className="h-3 w-3 mr-1" /> : <FlaskConical className="h-3 w-3 mr-1" />}
+                        {awardee.examType}
+                      </Badge>
+                    </div>
                     <CardTitle className="text-lg sm:text-xl text-primary">{awardee.name}</CardTitle>
                     <CardDescription className="flex items-center justify-center gap-2 pt-1 text-accent-foreground/80 text-sm sm:text-base">
                       <Award className="h-4 w-4 text-accent" /> {awardee.award}, {awardee.year}

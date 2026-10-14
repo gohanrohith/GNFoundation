@@ -124,13 +124,13 @@ export function Footer() {
               </h3>
               <ul className="space-y-4">
                 <li>
-                  <Link href="#" className="text-muted-foreground hover:text-[#008000] transition-all flex items-center group">
+                  <Link href="/privacy-policy" className="text-muted-foreground hover:text-[#008000] transition-all flex items-center group">
                     <span className="w-0 h-0.5 bg-[#008000] mr-0 transition-all group-hover:w-3 group-hover:mr-2 rounded-full" />
                     Privacy Policy
                   </Link>
                 </li>
                 <li>
-                  <Link href="#" className="text-muted-foreground hover:text-[#008000] transition-all flex items-center group">
+                  <Link href="/terms" className="text-muted-foreground hover:text-[#008000] transition-all flex items-center group">
                     <span className="w-0 h-0.5 bg-[#008000] mr-0 transition-all group-hover:w-3 group-hover:mr-2 rounded-full" />
                     Terms of Service
                   </Link>

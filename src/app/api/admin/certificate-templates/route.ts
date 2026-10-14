@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import CertificateTemplate from '@/models/CertificateTemplate';
+import { verifyAuth } from '@/lib/auth-server';
 
 export async function GET(request: NextRequest) {
+  const auth = verifyAuth();
+  if (!auth.success) return auth.response;
+
   try {
     await connectDB();
 

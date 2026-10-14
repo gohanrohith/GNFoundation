@@ -1,4 +1,11 @@
+import type { Metadata } from 'next';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+
+export const metadata: Metadata = {
+  title: 'RMTH & RSTH Talent Hunts',
+  description:
+    'Everything about the Regional Mathematics Talent Hunt (RMTH) and Regional Science Talent Hunt (RSTH) — eligibility, syllabus, exam pattern, awards, and key dates.',
+};
 import { Calendar, TestTube, Book, Award, FileText } from 'lucide-react';
 
 export default function TalentHuntPage() {

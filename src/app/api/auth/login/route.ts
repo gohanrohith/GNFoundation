@@ -38,12 +38,23 @@ export async function POST(request: NextRequest) {
         { expiresIn: '15m' }
       );
 
-      return NextResponse.json({
+      const response = NextResponse.json({
         success: true,
         message: 'Login successful',
         token,
         expiresIn: 900000, // 15 minutes in milliseconds
       });
+
+      // Set HttpOnly cookie for server-side auth on API routes
+      response.cookies.set('admin-token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 900, // 15 minutes in seconds
+        path: '/',
+      });
+
+      return response;
     } else {
       return NextResponse.json(
         { error: 'Invalid username or password' },

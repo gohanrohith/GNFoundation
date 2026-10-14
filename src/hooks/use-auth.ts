@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useState } from 'react';
+import { useEffect, useCallback, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useToast } from './use-toast';
 
@@ -6,12 +6,14 @@ const INACTIVITY_TIMEOUT = 15 * 60 * 1000; // 15 minutes in milliseconds
 const TOKEN_KEY = 'admin-auth-token';
 const LAST_ACTIVITY_KEY = 'admin-last-activity';
 const LOGOUT_REASON_KEY = 'admin-logout-reason';
+const REFRESH_DEBOUNCE = 60 * 1000; // refresh cookie at most once per minute
 
 export function useAuth() {
   const router = useRouter();
   const { toast } = useToast();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const lastRefreshRef = useRef<number>(0);
 
   // Check if token is valid and not expired
   const validateToken = useCallback(() => {
@@ -45,6 +47,9 @@ export function useAuth() {
 
     setIsAuthenticated(false);
 
+    // Clear HttpOnly server cookie
+    fetch('/api/auth/logout', { method: 'POST' }).catch(() => {});
+
     if (reason === 'inactivity') {
       toast({
         title: 'Session Expired',
@@ -56,10 +61,16 @@ export function useAuth() {
     router.replace('/login');
   }, [router, toast]);
 
-  // Update last activity timestamp
+  // Update last activity timestamp and debounce cookie refresh
   const updateActivity = useCallback(() => {
     if (isAuthenticated) {
       localStorage.setItem(LAST_ACTIVITY_KEY, Date.now().toString());
+
+      const now = Date.now();
+      if (now - lastRefreshRef.current > REFRESH_DEBOUNCE) {
+        lastRefreshRef.current = now;
+        fetch('/api/auth/refresh', { method: 'POST' }).catch(() => {});
+      }
     }
   }, [isAuthenticated]);
 

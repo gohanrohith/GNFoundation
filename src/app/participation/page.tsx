@@ -1,6 +1,12 @@
+'use client';
+
+import { useState } from 'react';
 import { CertificateForm } from './_components/certificate-form';
 
 export default function ParticipationPage() {
+  const [rmthKey, setRmthKey] = useState(0);
+  const [rsthKey, setRsthKey] = useState(0);
+
   return (
     <div className="bg-card border rounded-lg shadow-sm">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
@@ -15,11 +21,11 @@ export default function ParticipationPage() {
         <div className="mt-12 max-w-5xl mx-auto grid md:grid-cols-2 gap-8">
           <div>
             <h2 className="text-2xl font-semibold text-center mb-6 text-primary">RMTH Certificate</h2>
-            <CertificateForm examType="RMTH" />
+            <CertificateForm key={rmthKey} examType="RMTH" onReset={() => setRmthKey((k) => k + 1)} />
           </div>
           <div>
             <h2 className="text-2xl font-semibold text-center mb-6 text-primary">RSTH Certificate</h2>
-            <CertificateForm examType="RSTH" />
+            <CertificateForm key={rsthKey} examType="RSTH" onReset={() => setRsthKey((k) => k + 1)} />
           </div>
         </div>
       </div>

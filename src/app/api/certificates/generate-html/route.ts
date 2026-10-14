@@ -32,8 +32,8 @@ export async function POST(request: NextRequest) {
 
     const html = generateCertificateHTML(student, template);
 
-    // Use Gotenberg for PDF generation
-    const gotenbergUrl = process.env.GOTENBERG_URL || 'http://localhost:3000';
+    // Use Gotenberg for PDF generation (default port 3001 to avoid conflict with Next.js dev on 3000)
+    const gotenbergUrl = process.env.GOTENBERG_URL || 'http://localhost:3001';
 
     // Prepare form data for Gotenberg
     const formData = new FormData();

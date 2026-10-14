@@ -1,7 +1,8 @@
 'use client';
 
-import { useFormStatus, useFormState } from 'react-dom';
-import { useEffect, useRef, useState } from 'react';
+import { useFormStatus } from 'react-dom';
+import { useActionState } from 'react';
+import { useRef, useState } from 'react';
 import { findCertificate, type FormState } from '../actions';
 
 import { Button } from '@/components/ui/button';
@@ -30,25 +31,18 @@ function SubmitButton() {
 
 interface CertificateFormProps {
   examType: 'RMTH' | 'RSTH';
+  onReset?: () => void;
 }
 
-export function CertificateForm({ examType }: CertificateFormProps) {
-  const [state, formAction] = useFormState(findCertificate, initialState);
+export function CertificateForm({ examType, onReset }: CertificateFormProps) {
+  const [state, formAction] = useActionState(findCertificate, initialState);
   const formRef = useRef<HTMLFormElement>(null);
   const [isDownloading, setIsDownloading] = useState(false);
   const { toast } = useToast();
 
-  useEffect(() => {
-    if (state.success) {
-      // Don't reset the form on success so the user can see the download button
-      // formRef.current?.reset();
-    }
-  }, [state.success]);
-
   const handleNewSearch = () => {
     formRef.current?.reset();
-    // A bit of a hack to reset the state. A more robust solution might involve a state management library.
-    window.location.reload();
+    onReset?.();
   };
 
   const handleDownload = async () => {
