@@ -17,12 +17,6 @@ const navLinks = [
   { href: '/contact',      label: 'Contact' },
 ];
 
-const subLinks = [
-  { href: '/talent-hunt',  label: 'RMTH — Mathematics' },
-  { href: '/talent-hunt',  label: 'RSTH — Science' },
-  { href: '/awards',       label: 'Results' },
-  { href: '/participation', label: 'Certificate Download' },
-];
 
 export function Header() {
   const pathname = usePathname();
@@ -140,25 +134,6 @@ export function Header() {
         </div>
       </div>
 
-      {/* Navy sub-bar — desktop only */}
-      <div className="hidden md:block bg-[#0D2340]">
-        <div className="max-w-[1200px] mx-auto px-10 flex items-center justify-between py-[7px]">
-          <nav className="flex gap-7">
-            {subLinks.map((link) => (
-              <Link
-                key={link.label}
-                href={link.href}
-                className="text-white/55 hover:text-white/90 text-[11px] font-medium tracking-[0.1em] uppercase transition-colors"
-              >
-                {link.label}
-              </Link>
-            ))}
-          </nav>
-          <span className="font-heading text-white/40 text-[13px] italic">
-            Recognising excellence in Telangana since 2012
-          </span>
-        </div>
-      </div>
 
     </header>
   );

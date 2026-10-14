@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { isUserAuthenticated } from '@/hooks/use-auth';
 
@@ -28,7 +29,15 @@ export function Footer() {
 
           {/* Brand column */}
           <div className="md:col-span-1">
-            <div className="font-heading text-white text-xl font-semibold mb-1">GN Foundation</div>
+            <Link href="/" className="inline-block mb-3">
+              <Image
+                src="/docs/Logo.png"
+                alt="GN Foundation"
+                width={160}
+                height={44}
+                className="h-10 w-auto object-contain brightness-0 invert opacity-80"
+              />
+            </Link>
             <div className="text-[10px] tracking-[0.12em] uppercase text-white/25 mb-4">
               Registered · Hanumakonda, Telangana
             </div>
@@ -39,10 +48,10 @@ export function Footer() {
             </p>
             <div className="mt-5 space-y-1.5">
               <a
-                href="mailto:info@gnfoundation.com"
+                href="mailto:info@gnfoundation.co.in"
                 className="block text-[13px] text-white/45 hover:text-white/80 transition-colors"
               >
-                info@gnfoundation.com
+                info@gnfoundation.co.in
               </a>
               <a
                 href="tel:+919866514516"

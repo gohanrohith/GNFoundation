@@ -1,6 +1,6 @@
 import { MetadataRoute } from 'next';
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://gnfoundation.com';
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://gnfoundation.co.in';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [

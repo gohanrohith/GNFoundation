@@ -18,7 +18,7 @@ const sourceSans3 = Source_Sans_3({
   variable: '--font-source-sans',
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://gnfoundation.com';
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://gnfoundation.co.in';
 
 export const metadata: Metadata = {
   title: {

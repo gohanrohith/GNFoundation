@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 const sections = [
   {
     title: '1. Acceptance of Terms',
-    content: `By accessing and using the GN Foundation website (gnfoundation.com), you agree to be bound by these Terms of Service. If you do not agree to these terms, please discontinue use of the website.`,
+    content: `By accessing and using the GN Foundation website (gnfoundation.co.in), you agree to be bound by these Terms of Service. If you do not agree to these terms, please discontinue use of the website.`,
   },
   {
     title: '2. About GN Foundation',
@@ -64,7 +64,7 @@ const sections = [
 
 GN Foundation
 Hanumakonda, Telangana, India
-Email: info@gnfoundation.com
+Email: info@gnfoundation.co.in
 Phone: +91 9866 514 516`,
   },
 ];

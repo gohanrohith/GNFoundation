@@ -44,7 +44,7 @@ export async function sendContactEmail(opts: ContactMailOptions) {
           <tr><td style="padding:8px;font-weight:bold">Subject</td><td style="padding:8px">${escapeHtml(opts.subject)}</td></tr>
           <tr style="background:#f5f5f5"><td style="padding:8px;font-weight:bold;vertical-align:top">Message</td><td style="padding:8px;white-space:pre-wrap">${escapeHtml(opts.message)}</td></tr>
         </table>
-        <p style="color:#999;font-size:12px;margin-top:24px">Sent via gnfoundation.com contact form</p>
+        <p style="color:#999;font-size:12px;margin-top:24px">Sent via gnfoundation.co.in contact form</p>
       </div>
     `,
   });

@@ -207,7 +207,7 @@ export default function Home() {
               </div>
               <div className="py-2.5 border-b border-[#C8BFA8] flex flex-col gap-0.5">
                 <span className="text-[11px] font-semibold tracking-[0.06em] uppercase text-[#8C6A1A]">Email</span>
-                <span className="font-heading text-[14px] text-[#0D2340]">info@gnfoundation.com</span>
+                <span className="font-heading text-[14px] text-[#0D2340]">info@gnfoundation.co.in</span>
               </div>
               <div className="py-2.5 border-b border-[#C8BFA8] flex flex-col gap-0.5">
                 <span className="text-[11px] font-semibold tracking-[0.06em] uppercase text-[#8C6A1A]">Phone</span>

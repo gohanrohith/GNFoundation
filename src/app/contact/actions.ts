@@ -35,7 +35,7 @@ export async function submitContactForm(prevState: ContactFormState, formData: F
     console.error('SMTP credentials not configured');
     return {
       success: false,
-      message: 'Email service is not configured. Please contact us directly at info@gnfoundation.com.',
+      message: 'Email service is not configured. Please contact us directly at info@gnfoundation.co.in.',
     };
   }
 
@@ -51,7 +51,7 @@ export async function submitContactForm(prevState: ContactFormState, formData: F
     console.error('Failed to send contact email:', error);
     return {
       success: false,
-      message: 'Failed to send your message. Please try again or email us directly at info@gnfoundation.com.',
+      message: 'Failed to send your message. Please try again or email us directly at info@gnfoundation.co.in.',
     };
   }
 }

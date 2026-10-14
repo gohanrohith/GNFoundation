@@ -62,7 +62,7 @@ Access to student data is restricted to authorised administrators only and is pr
 • Request correction of inaccurate data
 • Request deletion of your data, subject to our legal obligations
 
-To exercise any of these rights, please contact us at info@gnfoundation.com.`,
+To exercise any of these rights, please contact us at info@gnfoundation.co.in.`,
   },
   {
     title: '9. Changes to This Policy',
@@ -74,7 +74,7 @@ To exercise any of these rights, please contact us at info@gnfoundation.com.`,
 
 GN Foundation
 Hanumakonda, Telangana, India
-Email: info@gnfoundation.com
+Email: info@gnfoundation.co.in
 Phone: +91 9866 514 516`,
   },
 ];

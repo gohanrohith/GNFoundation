@@ -43,7 +43,7 @@ export default function ContactPage() {
 
               {[
                 { k: 'Address',     v: 'GN Foundation, Hanumakonda,\nTelangana, India' },
-                { k: 'Email',       v: 'info@gnfoundation.com', href: 'mailto:info@gnfoundation.com' },
+                { k: 'Email',       v: 'info@gnfoundation.co.in', href: 'mailto:info@gnfoundation.co.in' },
                 { k: 'Phone',       v: '+91 9866 514 516',       href: 'tel:+919866514516' },
                 { k: 'Office Hours', v: 'Mon – Sat: 9:00 AM – 5:00 PM IST\nUsually responds within one business day.' },
               ].map(({ k, v, href }) => (

@@ -68,8 +68,8 @@ export default function ParticipationPage() {
           <span className="text-[11px] font-semibold tracking-[0.08em] uppercase text-[#8C6A1A]">Need help? </span>
           <span className="text-[13px] text-[#5C5040]">
             If you do not have your admission number, contact{' '}
-            <a href="mailto:info@gnfoundation.com" className="text-[#0D2340] underline underline-offset-2">
-              info@gnfoundation.com
+            <a href="mailto:info@gnfoundation.co.in" className="text-[#0D2340] underline underline-offset-2">
+              info@gnfoundation.co.in
             </a>{' '}
             with your full name, school, and class.
           </span>
