@@ -3,6 +3,8 @@ import connectDB from '@/lib/mongodb';
 import CertificateTemplate from '@/models/CertificateTemplate';
 import { verifyAuth } from '@/lib/auth-server';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
   const auth = verifyAuth();
   if (!auth.success) return auth.response;
