@@ -128,92 +128,139 @@ export default function AdminPage() {
   };
 
   return (
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-16">
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-primary">Admin Panel</h1>
-          <p className="mt-2 text-lg text-muted-foreground">Manage your website content here.</p>
+    <div style={{ background: 'var(--cream, #F8F5EF)', minHeight: '100vh' }}>
+      {/* Admin masthead */}
+      <div style={{ background: 'var(--navy, #0D2340)', borderBottom: '1px solid rgba(255,255,255,.1)' }}>
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8" style={{ maxWidth: '1200px' }}>
+          <div className="flex justify-between items-center py-4">
+            <div>
+              <div style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '.18em', textTransform: 'uppercase', color: 'var(--gold2, #B8920A)', marginBottom: '4px' }}>
+                GN Foundation
+              </div>
+              <h1 className="font-heading" style={{ fontSize: '22px', fontWeight: 600, color: '#fff', lineHeight: 1 }}>
+                Administration
+              </h1>
+            </div>
+            <Button
+              onClick={handleLogout}
+              variant="outline"
+              size="sm"
+              style={{ borderColor: 'rgba(255,255,255,.25)', color: 'rgba(255,255,255,.7)', background: 'transparent' }}
+            >
+              <LogOut className="mr-2 h-4 w-4" />
+              Logout
+            </Button>
+          </div>
         </div>
-        <Button onClick={handleLogout} variant="outline" title="Logout">
-          <LogOut className="mr-2 h-4 w-4" />
-          Logout
-        </Button>
       </div>
 
-      <Tabs defaultValue="awards">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="awards">Manage Awards</TabsTrigger>
-          <TabsTrigger value="certificates">Manage Certificates</TabsTrigger>
-        </TabsList>
-        <TabsContent value="awards" className="space-y-8">
-          <Card>
-            <CardHeader>
-              <CardTitle>Add New Awardee</CardTitle>
-              <CardDescription>Fill out the form to add a new award winner to the list.</CardDescription>
-            </CardHeader>
-            <AddAwardeeForm />
-          </Card>
-          <div>
-            <h2 className="text-2xl font-semibold tracking-tight mb-4">Current Awardees</h2>
-            {loading ? (
-              <div className="flex justify-center py-8">
-                <Loader2 className="h-6 w-6 animate-spin text-primary" />
+      {/* Main content */}
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8" style={{ maxWidth: '1200px' }}>
+        <Tabs defaultValue="awards">
+          <div style={{ borderBottom: '2px solid var(--navy, #0D2340)', marginBottom: '24px' }}>
+            <TabsList style={{ background: 'transparent', gap: '0', borderRadius: 0, padding: 0 }}>
+              <TabsTrigger
+                value="awards"
+                style={{ borderRadius: 0, fontWeight: 600, letterSpacing: '.04em', fontSize: '13px' }}
+              >
+                Manage Awards
+              </TabsTrigger>
+              <TabsTrigger
+                value="certificates"
+                style={{ borderRadius: 0, fontWeight: 600, letterSpacing: '.04em', fontSize: '13px' }}
+              >
+                Manage Certificates
+              </TabsTrigger>
+            </TabsList>
+          </div>
+
+          <TabsContent value="awards" className="space-y-8">
+            <Card style={{ borderRadius: '2px', border: '1px solid var(--rule, #C8BFA8)' }}>
+              <CardHeader style={{ borderBottom: '1px solid var(--rule, #C8BFA8)', background: 'white' }}>
+                <div style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase', color: 'var(--gold, #8C6A1A)', marginBottom: '4px' }}>
+                  Awards
+                </div>
+                <CardTitle className="font-heading" style={{ fontSize: '20px', color: 'var(--navy, #0D2340)' }}>Add New Awardee</CardTitle>
+                <CardDescription>Fill out the form to add a new award winner to the list.</CardDescription>
+              </CardHeader>
+              <AddAwardeeForm />
+            </Card>
+
+            <div>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: '16px', paddingBottom: '12px', borderBottom: '2px solid var(--navy, #0D2340)', marginBottom: '16px' }}>
+                <span style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase', color: 'var(--gold, #8C6A1A)' }}>Current</span>
+                <h2 className="font-heading" style={{ fontSize: '22px', fontWeight: 600, color: 'var(--navy, #0D2340)' }}>Awardees</h2>
               </div>
-            ) : (
-              <AwardeesTable awardees={awardees} />
-            )}
-          </div>
-        </TabsContent>
-        <TabsContent value="certificates" className="space-y-8">
-          <div className="space-y-6">
-            <VisualCertificateBuilder examType="RMTH" year={new Date().getFullYear()} />
-            <VisualCertificateBuilder examType="RSTH" year={new Date().getFullYear()} />
-          </div>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Upload Participation Data</CardTitle>
-              <CardDescription>
-                Upload an Excel/CSV file with participant data (Admission No., Name, etc.). This data will be merged
-                with the templates above to generate the final certificates.
-              </CardDescription>
-            </CardHeader>
-            <CertificateUploadForm />
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Manage Students</CardTitle>
-              <CardDescription>View, filter, edit, and delete student records. Filter by exam type, school, or class.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              {studentsLoading ? (
+              {loading ? (
                 <div className="flex justify-center py-8">
-                  <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                  <Loader2 className="h-6 w-6 animate-spin" style={{ color: 'var(--navy, #0D2340)' }} />
                 </div>
               ) : (
-                <StudentsTable initialStudents={students} schools={schools} classes={classes} />
+                <AwardeesTable awardees={awardees} />
               )}
-            </CardContent>
-          </Card>
+            </div>
+          </TabsContent>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Manage Certificate Templates</CardTitle>
-              <CardDescription>View and manage all certificate templates. You can delete templates that are no longer needed.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              {templatesLoading ? (
-                <div className="flex justify-center py-8">
-                  <Loader2 className="h-6 w-6 animate-spin text-primary" />
+          <TabsContent value="certificates" className="space-y-8">
+            <div className="space-y-6">
+              <VisualCertificateBuilder examType="RMTH" year={new Date().getFullYear()} />
+              <VisualCertificateBuilder examType="RSTH" year={new Date().getFullYear()} />
+            </div>
+
+            <Card style={{ borderRadius: '2px', border: '1px solid var(--rule, #C8BFA8)' }}>
+              <CardHeader style={{ borderBottom: '1px solid var(--rule, #C8BFA8)', background: 'white' }}>
+                <div style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase', color: 'var(--gold, #8C6A1A)', marginBottom: '4px' }}>
+                  Data
                 </div>
-              ) : (
-                <CertificateTemplateManager templates={templates} />
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+                <CardTitle className="font-heading" style={{ fontSize: '20px', color: 'var(--navy, #0D2340)' }}>Upload Participation Data</CardTitle>
+                <CardDescription>
+                  Upload an Excel/CSV file with participant data (Admission No., Name, etc.). This data will be merged
+                  with the templates above to generate the final certificates.
+                </CardDescription>
+              </CardHeader>
+              <CertificateUploadForm />
+            </Card>
+
+            <Card style={{ borderRadius: '2px', border: '1px solid var(--rule, #C8BFA8)' }}>
+              <CardHeader style={{ borderBottom: '1px solid var(--rule, #C8BFA8)', background: 'white' }}>
+                <div style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase', color: 'var(--gold, #8C6A1A)', marginBottom: '4px' }}>
+                  Records
+                </div>
+                <CardTitle className="font-heading" style={{ fontSize: '20px', color: 'var(--navy, #0D2340)' }}>Manage Students</CardTitle>
+                <CardDescription>View, filter, edit, and delete student records. Filter by exam type, school, or class.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {studentsLoading ? (
+                  <div className="flex justify-center py-8">
+                    <Loader2 className="h-6 w-6 animate-spin" style={{ color: 'var(--navy, #0D2340)' }} />
+                  </div>
+                ) : (
+                  <StudentsTable initialStudents={students} schools={schools} classes={classes} />
+                )}
+              </CardContent>
+            </Card>
+
+            <Card style={{ borderRadius: '2px', border: '1px solid var(--rule, #C8BFA8)' }}>
+              <CardHeader style={{ borderBottom: '1px solid var(--rule, #C8BFA8)', background: 'white' }}>
+                <div style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase', color: 'var(--gold, #8C6A1A)', marginBottom: '4px' }}>
+                  Templates
+                </div>
+                <CardTitle className="font-heading" style={{ fontSize: '20px', color: 'var(--navy, #0D2340)' }}>Manage Certificate Templates</CardTitle>
+                <CardDescription>View and manage all certificate templates. You can delete templates that are no longer needed.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {templatesLoading ? (
+                  <div className="flex justify-center py-8">
+                    <Loader2 className="h-6 w-6 animate-spin" style={{ color: 'var(--navy, #0D2340)' }} />
+                  </div>
+                ) : (
+                  <CertificateTemplateManager templates={templates} />
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </div>
     </div>
   );
 }

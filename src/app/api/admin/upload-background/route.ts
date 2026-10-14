@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { uploadToCloudinary } from '@/lib/cloudinary';
+import { verifyAuth } from '@/lib/auth-server';
 
 export async function POST(request: NextRequest) {
+  const auth = verifyAuth();
+  if (!auth.success) return auth.response;
+
   try {
     const formData = await request.formData();
     const file = formData.get('file') as File;

@@ -2,8 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import * as XLSX from 'xlsx';
 import connectDB from '@/lib/mongodb';
 import Student from '@/models/Student';
+import { verifyAuth } from '@/lib/auth-server';
 
 export async function POST(request: NextRequest) {
+  const auth = verifyAuth();
+  if (!auth.success) return auth.response;
+
   try {
     // Get the form data
     const formData = await request.formData();

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import CertificateTemplate from '@/models/CertificateTemplate';
+import { verifyAuth } from '@/lib/auth-server';
 
 // GET - Load visual template configuration
 export async function GET(request: NextRequest) {
@@ -58,11 +59,12 @@ export async function GET(request: NextRequest) {
 
 // POST - Save visual template configuration
 export async function POST(request: NextRequest) {
+  const auth = verifyAuth();
+  if (!auth.success) return auth.response;
+
   try {
     const body = await request.json();
     const { examType, year, backgroundImage, fields, orientation } = body;
-
-    console.log('Saving visual template:', { examType, year, hasBackground: !!backgroundImage, fieldCount: fields?.length, orientation });
 
     if (!examType || !year) {
       return NextResponse.json(
@@ -95,8 +97,6 @@ export async function POST(request: NextRequest) {
       orientation: orientation || 'portrait',
       isActive: true,
     });
-
-    console.log('Template saved successfully:', template._id);
 
     return NextResponse.json({
       success: true,

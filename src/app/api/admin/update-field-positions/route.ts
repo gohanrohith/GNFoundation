@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import CertificateTemplate from '@/models/CertificateTemplate';
+import { verifyAuth } from '@/lib/auth-server';
 
 export async function POST(request: NextRequest) {
+  const auth = verifyAuth();
+  if (!auth.success) return auth.response;
+
   try {
     const body = await request.json();
     const { examType, year, fieldPositions } = body;

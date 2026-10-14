@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import CertificateConfig from '@/models/CertificateConfig';
+import { verifyAuth } from '@/lib/auth-server';
 
 // GET - Load certificate configuration
 export async function GET(request: NextRequest) {
@@ -59,6 +60,9 @@ export async function GET(request: NextRequest) {
 
 // POST - Save certificate configuration
 export async function POST(request: NextRequest) {
+  const auth = verifyAuth();
+  if (!auth.success) return auth.response;
+
   try {
     const body = await request.json();
     const { examType, year, ...configData } = body;
