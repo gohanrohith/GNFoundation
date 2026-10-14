@@ -3,14 +3,20 @@ import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
-import { PT_Sans } from 'next/font/google';
+import { EB_Garamond, Source_Sans_3 } from 'next/font/google';
 
-const ptSans = PT_Sans({
+const ebGaramond = EB_Garamond({
   subsets: ['latin'],
-  weight: ['400', '700'],
-  variable: '--font-pt-sans',
+  weight: ['400', '500', '600', '700', '800'],
+  style: ['normal', 'italic'],
+  variable: '--font-eb-garamond',
 });
 
+const sourceSans3 = Source_Sans_3({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-source-sans',
+});
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://gnfoundation.com';
 
@@ -66,7 +72,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${ptSans.variable} h-full`}>
+    <html lang="en" className={`${ebGaramond.variable} ${sourceSans3.variable} h-full`}>
       <body className="font-body antialiased flex flex-col min-h-screen bg-background">
         <Header />
         <main className="flex-grow">{children}</main>

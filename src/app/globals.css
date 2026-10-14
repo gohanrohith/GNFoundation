@@ -4,80 +4,61 @@
 
 @layer base {
   :root {
-    /* Blueprint: Deep blue #1E3A8A → hsl(225 64% 33%) */
-    --primary: 225 64% 33%;
+    /* Navy + Gold institutional palette */
+    /* Primary = navy #0D2340  hsl(214 66% 15%) */
+    --primary: 214 66% 15%;
     --primary-foreground: 0 0% 100%;
 
-    /* Blueprint: Light blue background #E3F2FD → hsl(205 86% 94%) */
-    --background: 205 86% 94%;
-    --foreground: 224 40% 12%;
+    /* Background = cream #F8F5EF  hsl(40 40% 96%) */
+    --background: 40 40% 96%;
+    --foreground: 34 50% 7%;
 
-    /* Cards white — contrast against light blue background */
+    /* Cards = white */
     --card: 0 0% 100%;
-    --card-foreground: 224 40% 12%;
+    --card-foreground: 34 50% 7%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 224 40% 12%;
+    --popover-foreground: 34 50% 7%;
 
-    /* Blueprint: Golden yellow #FFC107 → hsl(45 100% 51%) */
-    --accent: 45 100% 51%;
-    --accent-foreground: 224 64% 12%;
+    /* Accent = gold #B8920A  hsl(47 90% 38%) */
+    --accent: 47 90% 38%;
+    --accent-foreground: 34 50% 7%;
 
-    --secondary: 205 40% 90%;
-    --secondary-foreground: 224 40% 20%;
+    /* Secondary = cream2 #F0EBE0 */
+    --secondary: 42 35% 91%;
+    --secondary-foreground: 34 50% 7%;
 
-    --muted: 205 40% 90%;
-    --muted-foreground: 215 20% 46%;
+    --muted: 42 35% 91%;
+    --muted-foreground: 34 18% 31%;
 
-    --destructive: 0 84% 60%;
+    --destructive: 0 63% 31%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 205 40% 84%;
-    --input: 205 40% 84%;
-    --ring: 225 64% 33%;
-    --radius: 0.5rem;
+    /* Border = rule #C8BFA8 */
+    --border: 43 22% 72%;
+    --input: 43 22% 72%;
+    --ring: 214 66% 15%;
 
-    --chart-1: 225 64% 33%;
-    --chart-2: 45 100% 51%;
+    /* Sharp corners: institutional aesthetic */
+    --radius: 0.125rem;
+
+    --chart-1: 214 66% 15%;
+    --chart-2: 47 90% 38%;
     --chart-3: 197 37% 38%;
     --chart-4: 43 74% 66%;
     --chart-5: 12 76% 61%;
-  }
 
-  .dark {
-    --background: 224 40% 8%;
-    --foreground: 210 40% 96%;
-
-    --card: 224 40% 12%;
-    --card-foreground: 210 40% 96%;
-
-    --popover: 224 40% 12%;
-    --popover-foreground: 210 40% 96%;
-
-    --primary: 215 80% 70%;
-    --primary-foreground: 224 64% 10%;
-
-    --accent: 45 90% 55%;
-    --accent-foreground: 224 64% 10%;
-
-    --secondary: 217 32% 18%;
-    --secondary-foreground: 210 40% 96%;
-
-    --muted: 217 32% 18%;
-    --muted-foreground: 215 20% 65%;
-
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217 32% 18%;
-    --input: 217 32% 18%;
-    --ring: 215 80% 70%;
-
-    --chart-1: 220 70% 60%;
-    --chart-2: 45 90% 60%;
-    --chart-3: 160 60% 45%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    /* Raw hex tokens for custom components */
+    --gn-navy:  #0D2340;
+    --gn-navy2: #16325C;
+    --gn-gold:  #8C6A1A;
+    --gn-gold2: #B8920A;
+    --gn-cream: #F8F5EF;
+    --gn-cream2:#F0EBE0;
+    --gn-white: #FFFFFF;
+    --gn-rule:  #C8BFA8;
+    --gn-muted: #5C5040;
+    --gn-fg:    #1A1208;
   }
 }
 
@@ -88,5 +69,8 @@
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-eb-garamond), Georgia, serif;
   }
 }

@@ -3,8 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { Home, Info, Trophy, Star, BookUser, Mails, Menu, ShieldCheck } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Menu } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetTitle } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
 import React, { useEffect, useState } from 'react';
@@ -12,142 +11,155 @@ import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { isUserAuthenticated } from '@/hooks/use-auth';
 
 const navLinks = [
-  { href: '/', label: 'Home', icon: Home },
-  { href: '/about', label: 'About GN', icon: Info },
-  { href: '/talent-hunt', label: 'Talent Hunts', icon: Trophy },
-  { href: '/awards', label: 'Awards', icon: Star },
-  { href: '/participation', label: 'Participation', icon: BookUser },
-  { href: '/contact', label: 'Contact', icon: Mails },
+  { href: '/about',        label: 'About' },
+  { href: '/talent-hunt',  label: 'Talent Hunts' },
+  { href: '/awards',       label: 'Awards' },
+  { href: '/contact',      label: 'Contact' },
+];
+
+const subLinks = [
+  { href: '/talent-hunt',  label: 'RMTH — Mathematics' },
+  { href: '/talent-hunt',  label: 'RSTH — Science' },
+  { href: '/awards',       label: 'Results' },
+  { href: '/participation', label: 'Certificate Download' },
 ];
 
 export function Header() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
     setIsAdmin(isUserAuthenticated());
   }, [pathname]);
 
   if (pathname === '/login') return null;
 
   const allNavLinks = isAdmin
-    ? [...navLinks, { href: '/admin', label: 'Admin', icon: ShieldCheck }]
+    ? [...navLinks, { href: '/admin', label: 'Admin' }]
     : navLinks;
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/60 bg-background/95 backdrop-blur-md shadow-sm">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-50 w-full">
 
-        {/* Desktop — single compact row */}
-        <div className="hidden md:flex h-[72px] items-center justify-between gap-8">
+      {/* 4px navy top rule */}
+      <div className="h-1 bg-[#0D2340]" />
+
+      {/* White masthead */}
+      <div className="bg-white border-b border-[#C8BFA8]">
+        <div className="max-w-[1200px] mx-auto px-6 lg:px-10 flex items-stretch min-h-[72px]">
+
           {/* Logo */}
-          <Link href="/" className="flex-shrink-0 transition-opacity hover:opacity-85 active:opacity-70">
+          <Link
+            href="/"
+            className="flex items-center py-3 pr-8 border-r border-[#C8BFA8] flex-shrink-0 transition-opacity hover:opacity-85"
+          >
             <Image
               src="/docs/Logo.png"
               alt="GN Foundation"
-              width={200}
-              height={56}
-              className="h-12 w-auto object-contain"
+              width={180}
+              height={48}
+              className="h-11 w-auto object-contain"
               priority
             />
           </Link>
 
-          {/* Nav */}
-          <nav className="flex items-center gap-1">
+          {/* Desktop nav */}
+          <nav className="hidden md:flex items-stretch justify-end flex-1 pl-6 gap-0">
             {allNavLinks.map((link) => {
               const isActive =
                 pathname === link.href ||
                 (link.href === '/admin' && pathname.startsWith('/admin'));
-
               return (
                 <Link
                   key={link.href}
                   href={link.href}
                   className={cn(
-                    'relative px-4 py-2 rounded-md text-sm font-semibold transition-colors duration-200',
+                    'px-5 flex items-center text-[13px] tracking-[0.04em] transition-colors',
                     isActive
-                      ? 'bg-primary text-primary-foreground'
-                      : 'text-foreground/70 hover:text-primary hover:bg-primary/8'
+                      ? 'text-[#0D2340] font-semibold bg-[#F8F5EF]'
+                      : 'text-[#5C5040] font-medium hover:text-[#0D2340] hover:bg-[#F8F5EF]'
                   )}
                 >
                   {link.label}
-                  {/* Gold accent underline on hover for inactive items */}
-                  {mounted && !isActive && (
-                    <span className="absolute bottom-1 left-1/2 -translate-x-1/2 h-0.5 w-0 bg-accent transition-all duration-300 group-hover:w-4 rounded-full" />
-                  )}
                 </Link>
               );
             })}
+            <Link
+              href="/participation"
+              className="ml-3 flex-shrink-0 flex items-center px-6 bg-[#0D2340] text-white text-[13px] font-semibold tracking-[0.04em] hover:bg-[#16325C] transition-colors"
+            >
+              Certificate Download
+            </Link>
           </nav>
-        </div>
 
-        {/* Mobile row */}
-        <div className="md:hidden flex h-16 items-center justify-between">
-          <Link href="/" className="transition-opacity active:opacity-70">
-            <Image
-              src="/docs/Logo.png"
-              alt="GN Foundation"
-              width={160}
-              height={44}
-              className="h-11 w-auto object-contain"
-            />
-          </Link>
-
-          <Sheet open={isOpen} onOpenChange={setIsOpen}>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="hover:bg-primary/10">
-                <Menu className="h-6 w-6 text-primary" />
-                <span className="sr-only">Toggle menu</span>
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="right" className="w-[280px] bg-background border-l border-border">
-              <VisuallyHidden>
-                <SheetTitle>Navigation Menu</SheetTitle>
-              </VisuallyHidden>
-              <div className="flex flex-col h-full py-8">
-                <div className="flex justify-center mb-8">
-                  <Image
-                    src="/docs/Logo.png"
-                    alt="GN Foundation"
-                    width={160}
-                    height={44}
-                    className="h-11 w-auto object-contain"
-                  />
+          {/* Mobile hamburger */}
+          <div className="md:hidden flex items-center justify-end flex-1">
+            <Sheet open={isOpen} onOpenChange={setIsOpen}>
+              <SheetTrigger asChild>
+                <button className="p-2 text-[#0D2340]" aria-label="Open menu">
+                  <Menu className="h-6 w-6" />
+                </button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-[280px] bg-[#F8F5EF] border-l border-[#C8BFA8] p-0">
+                <VisuallyHidden>
+                  <SheetTitle>Navigation Menu</SheetTitle>
+                </VisuallyHidden>
+                <div className="flex flex-col h-full">
+                  <div className="px-6 pt-8 pb-5 border-b border-[#C8BFA8]">
+                    <div className="font-heading text-[#0D2340] text-xl font-semibold">GN Foundation</div>
+                    <div className="text-[10px] font-semibold tracking-[0.18em] uppercase text-[#8C6A1A] mt-1">
+                      Hanumakonda · Telangana
+                    </div>
+                  </div>
+                  <nav className="flex-1 overflow-auto py-2">
+                    {[...allNavLinks, { href: '/participation', label: 'Certificate Download' }].map((link) => {
+                      const isActive = pathname === link.href;
+                      return (
+                        <SheetClose asChild key={`${link.href}-${link.label}`}>
+                          <Link
+                            href={link.href}
+                            className={cn(
+                              'flex items-center px-6 py-3 text-sm border-b border-[#C8BFA8] transition-colors',
+                              isActive
+                                ? 'text-[#0D2340] font-semibold bg-white'
+                                : 'text-[#5C5040] font-medium hover:text-[#0D2340] hover:bg-white'
+                            )}
+                          >
+                            {link.label}
+                          </Link>
+                        </SheetClose>
+                      );
+                    })}
+                  </nav>
                 </div>
-                <nav className="space-y-1">
-                  {allNavLinks.map((link) => {
-                    const isActive =
-                      pathname === link.href ||
-                      (link.href === '/admin' && pathname.startsWith('/admin'));
-                    const Icon = link.icon;
+              </SheetContent>
+            </Sheet>
+          </div>
 
-                    return (
-                      <SheetClose asChild key={link.href}>
-                        <Link
-                          href={link.href}
-                          className={cn(
-                            'flex items-center gap-3 rounded-lg px-4 py-3 text-base font-semibold transition-colors',
-                            isActive
-                              ? 'bg-primary text-primary-foreground'
-                              : 'text-foreground/70 hover:bg-primary/10 hover:text-primary'
-                          )}
-                        >
-                          <Icon className="h-5 w-5 flex-shrink-0" />
-                          {link.label}
-                        </Link>
-                      </SheetClose>
-                    );
-                  })}
-                </nav>
-              </div>
-            </SheetContent>
-          </Sheet>
         </div>
-
       </div>
+
+      {/* Navy sub-bar — desktop only */}
+      <div className="hidden md:block bg-[#0D2340]">
+        <div className="max-w-[1200px] mx-auto px-10 flex items-center justify-between py-[7px]">
+          <nav className="flex gap-7">
+            {subLinks.map((link) => (
+              <Link
+                key={link.label}
+                href={link.href}
+                className="text-white/55 hover:text-white/90 text-[11px] font-medium tracking-[0.1em] uppercase transition-colors"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
+          <span className="font-heading text-white/40 text-[13px] italic">
+            Recognising excellence in Telangana since 2012
+          </span>
+        </div>
+      </div>
+
     </header>
   );
 }
