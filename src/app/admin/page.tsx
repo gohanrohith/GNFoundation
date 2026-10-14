@@ -14,9 +14,20 @@ import { TemplateUploadCard } from './_components/template-upload-card';
 import { TemplateFieldEditor } from './_components/template-field-editor';
 import { CertificateDesigner } from './_components/certificate-designer';
 import { VisualCertificateBuilder } from './_components/visual-certificate-builder';
+import { AuditLogTable } from './_components/AuditLogTable';
 import { Button } from '@/components/ui/button';
-import { LogOut, Loader2 } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { LogOut, Loader2, Trash2 } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
+import { deleteCohort } from './actions';
+import { useTransition } from 'react';
+import { useToast } from '@/hooks/use-toast';
 
 interface Awardee {
   _id: string;
@@ -58,6 +69,20 @@ interface Student {
 export default function AdminPage() {
   const router = useRouter();
   const { logout } = useAuth();
+  const { toast } = useToast();
+  const [cohortPending, startCohortTransition] = useTransition();
+  const [cohortExamType, setCohortExamType] = useState<string>('RMTH');
+  const [cohortYear, setCohortYear] = useState<string>(String(new Date().getFullYear()));
+  const [showCohortConfirm, setShowCohortConfirm] = useState(false);
+
+  const handleCohortDelete = () => {
+    startCohortTransition(async () => {
+      const result = await deleteCohort(cohortExamType as 'RMTH' | 'RSTH', Number(cohortYear));
+      if (result.message.toLowerCase().includes('unauthorized')) { router.push('/login'); return; }
+      toast({ title: result.success ? 'Success' : 'Error', description: result.message, variant: result.success ? 'default' : 'destructive' });
+      if (result.success) setShowCohortConfirm(false);
+    });
+  };
   const [awardees, setAwardees] = useState<Awardee[]>([]);
   const [templates, setTemplates] = useState<CertificateTemplate[]>([]);
   const [students, setStudents] = useState<Student[]>([]);
@@ -171,6 +196,12 @@ export default function AdminPage() {
               >
                 Manage Certificates
               </TabsTrigger>
+              <TabsTrigger
+                value="audit"
+                style={{ borderRadius: 0, fontWeight: 600, letterSpacing: '.04em', fontSize: '13px' }}
+              >
+                Audit Log
+              </TabsTrigger>
             </TabsList>
           </div>
 
@@ -203,8 +234,8 @@ export default function AdminPage() {
 
           <TabsContent value="certificates" className="space-y-8">
             <div className="space-y-6">
-              <VisualCertificateBuilder examType="RMTH" year={new Date().getFullYear()} />
-              <VisualCertificateBuilder examType="RSTH" year={new Date().getFullYear()} />
+              <VisualCertificateBuilder examType="RMTH" />
+              <VisualCertificateBuilder examType="RSTH" />
             </div>
 
             <Card style={{ borderRadius: '2px', border: '1px solid var(--rule, #C8BFA8)' }}>
@@ -240,6 +271,58 @@ export default function AdminPage() {
               </CardContent>
             </Card>
 
+            {/* Bulk Cohort Delete */}
+            <Card style={{ borderRadius: '2px', border: '1px solid var(--rule, #C8BFA8)' }}>
+              <CardHeader style={{ borderBottom: '1px solid var(--rule, #C8BFA8)', background: 'white' }}>
+                <div style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase', color: 'var(--gold, #8C6A1A)', marginBottom: '4px' }}>
+                  Bulk Operations
+                </div>
+                <CardTitle className="font-heading" style={{ fontSize: '20px', color: 'var(--navy, #0D2340)' }}>Clear Cohort</CardTitle>
+                <CardDescription>Delete all student records for a given exam type and year. Use this before importing a fresh cohort.</CardDescription>
+              </CardHeader>
+              <CardContent className="pt-6">
+                <div className="flex flex-wrap items-end gap-4 max-w-lg">
+                  <div className="space-y-1">
+                    <Label>Exam Type</Label>
+                    <Select value={cohortExamType} onValueChange={setCohortExamType}>
+                      <SelectTrigger className="w-[140px]"><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="RMTH">RMTH</SelectItem>
+                        <SelectItem value="RSTH">RSTH</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-1">
+                    <Label>Year</Label>
+                    <Input type="number" value={cohortYear} onChange={(e) => setCohortYear(e.target.value)}
+                      min="2020" max={new Date().getFullYear() + 1} className="w-[100px]" />
+                  </div>
+                  <Button variant="destructive" onClick={() => setShowCohortConfirm(true)} disabled={cohortPending}>
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Clear Cohort
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            <AlertDialog open={showCohortConfirm} onOpenChange={setShowCohortConfirm}>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Delete all {cohortExamType} {cohortYear} students?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This will permanently delete every student record for {cohortExamType} {cohortYear}. This action cannot be undone.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel disabled={cohortPending}>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleCohortDelete} disabled={cohortPending} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                    {cohortPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    Delete All
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+
             <Card style={{ borderRadius: '2px', border: '1px solid var(--rule, #C8BFA8)' }}>
               <CardHeader style={{ borderBottom: '1px solid var(--rule, #C8BFA8)', background: 'white' }}>
                 <div style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase', color: 'var(--gold, #8C6A1A)', marginBottom: '4px' }}>
@@ -258,6 +341,19 @@ export default function AdminPage() {
                 )}
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="audit" className="space-y-6">
+            <div>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: '16px', paddingBottom: '12px', borderBottom: '2px solid var(--navy, #0D2340)', marginBottom: '16px' }}>
+                <span style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase', color: 'var(--gold, #8C6A1A)' }}>Activity</span>
+                <h2 className="font-heading" style={{ fontSize: '22px', fontWeight: 600, color: 'var(--navy, #0D2340)' }}>Audit Log</h2>
+              </div>
+              <p style={{ fontSize: '13px', color: 'var(--muted, #5C5040)', marginBottom: '16px' }}>
+                Last 50 admin actions — awardee changes, student uploads, and template deletions.
+              </p>
+              <AuditLogTable />
+            </div>
           </TabsContent>
         </Tabs>
       </div>

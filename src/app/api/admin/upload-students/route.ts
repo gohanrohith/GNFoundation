@@ -3,6 +3,7 @@ import * as XLSX from 'xlsx';
 import connectDB from '@/lib/mongodb';
 import Student from '@/models/Student';
 import { verifyAuth } from '@/lib/auth-server';
+import { logAudit } from '@/lib/audit';
 
 export async function POST(request: NextRequest) {
   const auth = verifyAuth();
@@ -108,6 +109,12 @@ export async function POST(request: NextRequest) {
         });
       }
     }
+
+    await logAudit({
+      action: 'student.bulkUpload',
+      entity: 'Student',
+      detail: `Bulk uploaded ${students.length} student records (${examType}, ${year})${errors.length > 0 ? ` — ${errors.length} row errors` : ''}`,
+    });
 
     return NextResponse.json({
       success: true,

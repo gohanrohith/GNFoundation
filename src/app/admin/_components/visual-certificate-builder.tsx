@@ -21,12 +21,14 @@ interface Field {
   text: string;
 }
 
+const YEAR_OPTIONS = Array.from({ length: 4 }, (_, i) => new Date().getFullYear() - i);
+
 interface VisualCertificateBuilderProps {
   examType: 'RMTH' | 'RSTH';
-  year: number;
 }
 
-export function VisualCertificateBuilder({ examType, year }: VisualCertificateBuilderProps) {
+export function VisualCertificateBuilder({ examType }: VisualCertificateBuilderProps) {
+  const [year, setYear] = useState<number>(new Date().getFullYear());
   const [backgroundImage, setBackgroundImage] = useState<string>('');
   const [backgroundFile, setBackgroundFile] = useState<File | null>(null);
   const [orientation, setOrientation] = useState<'portrait' | 'landscape'>('portrait');
@@ -158,7 +160,16 @@ export function VisualCertificateBuilder({ examType, year }: VisualCertificateBu
         <CardTitle>Visual Builder (Percentage Based)</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="flex gap-4 mb-4">
+        <div className="flex gap-4 mb-4 flex-wrap">
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium">Year:</span>
+              <Select value={String(year)} onValueChange={(v) => setYear(Number(v))}>
+                <SelectTrigger className="w-[100px]"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {YEAR_OPTIONS.map((y) => <SelectItem key={y} value={String(y)}>{y}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
             <Button onClick={() => fileInputRef.current?.click()} variant="outline">Upload Background</Button>
             <Select value={orientation} onValueChange={(v: any) => setOrientation(v)}>
                 <SelectTrigger className="w-[180px]"><SelectValue /></SelectTrigger>

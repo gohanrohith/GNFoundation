@@ -37,7 +37,7 @@ import {
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Pencil, Trash2, Loader2, Filter } from 'lucide-react';
+import { Pencil, Trash2, Loader2, Filter, Download, ChevronLeft, ChevronRight } from 'lucide-react';
 import { deleteStudent, updateStudent } from '../actions';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
@@ -62,12 +62,29 @@ interface StudentsTableProps {
   classes: string[];
 }
 
+const PAGE_SIZE = 20;
+
+function exportCSV(data: Student[]) {
+  const headers = ['Admission No.', 'Student Name', 'Father Name', 'School', 'Class', 'Exam Type', 'Year', 'Marks', 'Rank', 'Grade'];
+  const rows = data.map((s) => [
+    s.admissionNumber, s.studentName, s.fatherName ?? '', s.school, s.class,
+    s.examType, s.year, s.marks ?? '', s.rank ?? '', s.grade ?? '',
+  ]);
+  const csv = [headers, ...rows].map((r) => r.map(String).map((v) => `"${v.replace(/"/g, '""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'students.csv'; a.click();
+  URL.revokeObjectURL(url);
+}
+
 export function StudentsTable({ initialStudents, schools, classes }: StudentsTableProps) {
   const router = useRouter();
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
   const [students, setStudents] = useState<Student[]>(initialStudents);
   const [filteredStudents, setFilteredStudents] = useState<Student[]>(initialStudents);
+  const [currentPage, setCurrentPage] = useState(1);
   const [editingStudent, setEditingStudent] = useState<Student | null>(null);
   const [deletingStudent, setDeletingStudent] = useState<Student | null>(null);
   const [editFormData, setEditFormData] = useState<any>({});
@@ -78,9 +95,18 @@ export function StudentsTable({ initialStudents, schools, classes }: StudentsTab
   const [selectedClass, setSelectedClass] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState<string>('');
 
+  const totalPages = Math.max(1, Math.ceil(filteredStudents.length / PAGE_SIZE));
+  const safePage = Math.min(currentPage, totalPages);
+  const paginatedStudents = filteredStudents.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
+
+  const handleUnauthorized = (message: string) => {
+    if (message.toLowerCase().includes('unauthorized')) router.push('/login');
+  };
+
   useEffect(() => {
     setStudents(initialStudents);
     setFilteredStudents(initialStudents);
+    setCurrentPage(1);
   }, [initialStudents]);
 
   useEffect(() => {
@@ -109,6 +135,7 @@ export function StudentsTable({ initialStudents, schools, classes }: StudentsTab
     }
 
     setFilteredStudents(filtered);
+    setCurrentPage(1);
   }, [selectedExamType, selectedSchool, selectedClass, searchTerm, students]);
 
   const handleEdit = (student: Student) => {
@@ -140,7 +167,7 @@ export function StudentsTable({ initialStudents, schools, classes }: StudentsTab
 
     startTransition(async () => {
       const result = await updateStudent(editingStudent._id, { success: false, message: '' }, formData);
-
+      handleUnauthorized(result.message);
       if (result.success) {
         toast({
           title: 'Success',
@@ -163,7 +190,7 @@ export function StudentsTable({ initialStudents, schools, classes }: StudentsTab
 
     startTransition(async () => {
       const result = await deleteStudent(deletingStudent._id);
-
+      handleUnauthorized(result.message);
       if (result.success) {
         toast({
           title: 'Success',
@@ -198,6 +225,11 @@ export function StudentsTable({ initialStudents, schools, classes }: StudentsTab
           <Button variant="ghost" size="sm" onClick={clearFilters}>
             Clear All
           </Button>
+          <div className="ml-auto">
+            <Button variant="outline" size="sm" onClick={() => exportCSV(filteredStudents)} disabled={filteredStudents.length === 0}>
+              <Download className="mr-2 h-4 w-4" /> Export CSV
+            </Button>
+          </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="space-y-2">
@@ -255,72 +287,75 @@ export function StudentsTable({ initialStudents, schools, classes }: StudentsTab
           </div>
         </div>
         <div className="text-sm text-muted-foreground">
-          Showing {filteredStudents.length} of {students.length} students
+          Showing {filteredStudents.length === 0 ? 0 : (safePage - 1) * PAGE_SIZE + 1}–{Math.min(safePage * PAGE_SIZE, filteredStudents.length)} of {filteredStudents.length} students
         </div>
       </div>
 
       {/* Table */}
       <div className="border rounded-lg overflow-hidden">
-        <div className="max-h-[600px] overflow-y-auto">
-          <Table>
-            <TableHeader className="sticky top-0 bg-background z-10">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Admission No.</TableHead>
+              <TableHead>Student Name</TableHead>
+              <TableHead>Father Name</TableHead>
+              <TableHead>School</TableHead>
+              <TableHead>Class</TableHead>
+              <TableHead>Exam Type</TableHead>
+              <TableHead>Year</TableHead>
+              <TableHead>Marks</TableHead>
+              <TableHead>Rank</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {paginatedStudents.length === 0 ? (
               <TableRow>
-                <TableHead>Admission No.</TableHead>
-                <TableHead>Student Name</TableHead>
-                <TableHead>Father Name</TableHead>
-                <TableHead>School</TableHead>
-                <TableHead>Class</TableHead>
-                <TableHead>Exam Type</TableHead>
-                <TableHead>Year</TableHead>
-                <TableHead>Marks</TableHead>
-                <TableHead>Rank</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableCell colSpan={10} className="text-center py-10 text-muted-foreground">
+                  {students.length === 0 ? 'No students have been uploaded yet.' : 'No students match the current filters.'}
+                </TableCell>
               </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredStudents.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={10} className="text-center py-8 text-muted-foreground">
-                    No students found
+            ) : (
+              paginatedStudents.map((student) => (
+                <TableRow key={student._id}>
+                  <TableCell className="font-medium">{student.admissionNumber}</TableCell>
+                  <TableCell>{student.studentName}</TableCell>
+                  <TableCell>{student.fatherName || '-'}</TableCell>
+                  <TableCell>{student.school}</TableCell>
+                  <TableCell>{student.class}</TableCell>
+                  <TableCell>{student.examType}</TableCell>
+                  <TableCell>{student.year}</TableCell>
+                  <TableCell>{student.marks || '-'}</TableCell>
+                  <TableCell>{student.rank || '-'}</TableCell>
+                  <TableCell className="text-right space-x-2">
+                    <Button variant="ghost" size="icon" onClick={() => handleEdit(student)} disabled={isPending}>
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                    <Button variant="ghost" size="icon" onClick={() => setDeletingStudent(student)} disabled={isPending}>
+                      <Trash2 className="h-4 w-4 text-destructive" />
+                    </Button>
                   </TableCell>
                 </TableRow>
-              ) : (
-                filteredStudents.map((student) => (
-                  <TableRow key={student._id}>
-                    <TableCell className="font-medium">{student.admissionNumber}</TableCell>
-                    <TableCell>{student.studentName}</TableCell>
-                    <TableCell>{student.fatherName || '-'}</TableCell>
-                    <TableCell>{student.school}</TableCell>
-                    <TableCell>{student.class}</TableCell>
-                    <TableCell>{student.examType}</TableCell>
-                    <TableCell>{student.year}</TableCell>
-                    <TableCell>{student.marks || '-'}</TableCell>
-                    <TableCell>{student.rank || '-'}</TableCell>
-                    <TableCell className="text-right space-x-2">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleEdit(student)}
-                        disabled={isPending}
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => setDeletingStudent(student)}
-                        disabled={isPending}
-                      >
-                        <Trash2 className="h-4 w-4 text-destructive" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </div>
+              ))
+            )}
+          </TableBody>
+        </Table>
       </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between mt-3">
+          <span className="text-sm text-muted-foreground">Page {safePage} of {totalPages}</span>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={safePage === 1}>
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))} disabled={safePage === totalPages}>
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* Edit Dialog */}
       <Dialog open={!!editingStudent} onOpenChange={(open) => !open && setEditingStudent(null)}>

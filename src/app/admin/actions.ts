@@ -6,6 +6,7 @@ import connectDB from '@/lib/mongodb';
 import Awardee from '@/models/Awardee';
 import { uploadToCloudinary } from '@/lib/cloudinary';
 import { verifyAuthForAction } from '@/lib/auth-server';
+import { logAudit } from '@/lib/audit';
 
 const awardeeSchema = z.object({
   name: z.string().min(1, 'Name is required.'),
@@ -75,6 +76,12 @@ export async function addAwardee(prevState: FormState, formData: FormData): Prom
 
     revalidatePath('/awards');
     revalidatePath('/admin');
+
+    await logAudit({
+      action: 'awardee.create',
+      entity: 'Awardee',
+      detail: `Added ${validatedFields.data.name} (${validatedFields.data.examType}, Rank ${validatedFields.data.rank}, ${validatedFields.data.year})`,
+    });
 
     return {
       success: true,
@@ -290,6 +297,13 @@ export async function deleteAwardee(awardeeId: string): Promise<FormState> {
         revalidatePath('/awards');
         revalidatePath('/admin');
 
+        await logAudit({
+            action: 'awardee.delete',
+            entity: 'Awardee',
+            entityId: awardeeId,
+            detail: `Deleted awardee ${deletedAwardee.name} (${deletedAwardee.examType}, ${deletedAwardee.year})`,
+        });
+
         return {
             success: true,
             message: 'Awardee has been deleted successfully.'
@@ -361,6 +375,13 @@ export async function updateAwardee(awardeeId: string, prevState: FormState, for
         revalidatePath('/awards');
         revalidatePath('/admin');
 
+        await logAudit({
+            action: 'awardee.update',
+            entity: 'Awardee',
+            entityId: awardeeId,
+            detail: `Updated awardee ${validatedFields.data.name} (${validatedFields.data.examType}, Rank ${validatedFields.data.rank}, ${validatedFields.data.year})`,
+        });
+
         return {
             success: true,
             message: 'Awardee has been updated successfully.'
@@ -403,6 +424,13 @@ export async function deleteCertificateTemplate(templateId: string): Promise<For
         }
 
         revalidatePath('/admin');
+
+        await logAudit({
+            action: 'template.delete',
+            entity: 'CertificateTemplate',
+            entityId: templateId,
+            detail: `Deleted certificate template (${deletedTemplate.examType}, ${deletedTemplate.year})`,
+        });
 
         return {
             success: true,
@@ -553,6 +581,13 @@ export async function deleteStudent(studentId: string): Promise<FormState> {
 
         revalidatePath('/admin');
 
+        await logAudit({
+            action: 'student.delete',
+            entity: 'Student',
+            entityId: studentId,
+            detail: `Deleted student ${deletedStudent.studentName} (${deletedStudent.admissionNumber}, ${deletedStudent.examType} ${deletedStudent.year})`,
+        });
+
         return {
             success: true,
             message: 'Student has been deleted successfully.'
@@ -563,5 +598,26 @@ export async function deleteStudent(studentId: string): Promise<FormState> {
             success: false,
             message: error.message || 'Failed to delete student. Please try again.'
         };
+    }
+}
+
+export async function deleteCohort(examType: 'RMTH' | 'RSTH', year: number): Promise<FormState> {
+    if (!verifyAuthForAction()) return { success: false, message: 'Unauthorized. Please log in again.' };
+
+    if (!examType || !year || year < 2000) {
+        return { success: false, message: 'Invalid exam type or year.' };
+    }
+
+    try {
+        await connectDB();
+        const Student = (await import('@/models/Student')).default;
+        const result = await Student.deleteMany({ examType, year });
+        revalidatePath('/admin');
+        return {
+            success: true,
+            message: `Deleted ${result.deletedCount} student record(s) for ${examType} ${year}.`,
+        };
+    } catch (error: any) {
+        return { success: false, message: error.message || 'Failed to delete cohort.' };
     }
 }
