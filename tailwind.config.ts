@@ -10,7 +10,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        body: ['var(--font-inter)', 'sans-serif'],
+        body: ['var(--font-pt-sans)', 'PT Sans', 'sans-serif'],
       },
       colors: {
         background: 'hsl(var(--background))',

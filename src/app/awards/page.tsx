@@ -115,11 +115,20 @@ export default function AwardsPage() {
                   </div>
                 )}
                 <CardHeader className="flex-grow p-4">
-                  <div className="flex justify-center mb-2">
+                  <div className="flex justify-between items-start mb-2">
                     <Badge variant={awardee.examType === 'RMTH' ? 'default' : 'secondary'} className="text-xs">
                       {awardee.examType === 'RMTH' ? <Calculator className="h-3 w-3 mr-1" /> : <FlaskConical className="h-3 w-3 mr-1" />}
                       {awardee.examType}
                     </Badge>
+                    {awardee.rank <= 3 && (
+                      <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
+                        awardee.rank === 1 ? 'bg-accent text-accent-foreground' :
+                        awardee.rank === 2 ? 'bg-muted text-muted-foreground' :
+                        'bg-orange-100 text-orange-700'
+                      }`}>
+                        #{awardee.rank}
+                      </span>
+                    )}
                   </div>
                   <CardTitle className="text-lg sm:text-xl text-primary">{awardee.name}</CardTitle>
                   <CardDescription className="flex items-center justify-center gap-2 pt-1 text-accent-foreground/80 text-sm sm:text-base">
@@ -228,11 +237,20 @@ export default function AwardsPage() {
                     </div>
                   )}
                   <CardHeader className="flex-grow p-4">
-                    <div className="flex justify-center mb-2">
+                    <div className="flex justify-between items-start mb-2">
                       <Badge variant={awardee.examType === 'RMTH' ? 'default' : 'secondary'} className="text-xs">
                         {awardee.examType === 'RMTH' ? <Calculator className="h-3 w-3 mr-1" /> : <FlaskConical className="h-3 w-3 mr-1" />}
                         {awardee.examType}
                       </Badge>
+                      {awardee.rank <= 3 && (
+                        <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
+                          awardee.rank === 1 ? 'bg-accent text-accent-foreground' :
+                          awardee.rank === 2 ? 'bg-muted text-muted-foreground' :
+                          'bg-orange-100 text-orange-700'
+                        }`}>
+                          #{awardee.rank}
+                        </span>
+                      )}
                     </div>
                     <CardTitle className="text-lg sm:text-xl text-primary">{awardee.name}</CardTitle>
                     <CardDescription className="flex items-center justify-center gap-2 pt-1 text-accent-foreground/80 text-sm sm:text-base">
